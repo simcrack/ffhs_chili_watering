@@ -1,8 +1,9 @@
-from Sensor.enums import *
+from .enums import State
 import threading
 import random
 import time
 
+# abstract class, represents a sensor
 class Sensor:
 
 	def __init__(self, gpio):
@@ -12,6 +13,9 @@ class Sensor:
 		self._stop = False
 		self._value = None
 	
+	# starts the sensor
+	# this function keeps running until the function
+	# stop() is called from another thread 
 	def run(self):
 		self._state = State.RUNNING
 		while 1:
@@ -28,12 +32,14 @@ class Sensor:
 			finally:
 				self.lock.release()
 
-	#not thread safe
+	# not thread safe
+	# getter for current state of the sensor
+	# does not not have to be true (due to non-thread-safety)
 	def getState(self):
 		return self._state
 
-	#thread safe
-	#getter
+	# thread safe
+	# getter for last measured value
 	def getValue(self):
 		self.lock.acquire(True, -1)
 		try:
@@ -41,8 +47,8 @@ class Sensor:
 		finally:
 			self.lock.release()
 	
-	#thread safe
-	#setter to send a stop command
+	# thread safe
+	# stops the sensor measure loop
 	def stop(self):
 		self.lock.acquire(True, -1)
 		try:
@@ -51,8 +57,8 @@ class Sensor:
 		finally:
 			self.lock.release()
 
-	#not thread safe
-	#must be called synchronized
-	#optains and returns value from sensor
+	# not thread safe
+	# optains and returns value from sensor
+	# must be implemented in descendant classes
 	def _measure(self):
-		return random.randint(1, 100)
+		raise NotImplementedError

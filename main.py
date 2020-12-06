@@ -1,14 +1,8 @@
-#!/usr/bin/python
-
 import threading
-import time
-import queue
-
-from Sensor.SensorFactory import *
-from Sensor.enums import *
+import Sensor
 
 
-s = createSensor(SensorType.TEMPERATURE)
+s = Sensor.createSensor(Sensor.Type.TEMPERATURE)
 
 #x = threading.Thread(target=p.getStatus, args=(1,))
 x = threading.Thread(target=s.run, args=())
@@ -20,5 +14,3 @@ try:
 finally:
 	s.stop()
 	x.join()
-
-

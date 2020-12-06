@@ -1,0 +1,32 @@
+== Sensor
+This ist the Sensor Module.
+
+Its main content is an abstract class `Sensor` and descendants which implement this class.
+
+=== Usage
+
+.create sensor
+[source,python]
+----
+import Sensor
+
+s = Sensor.createSensor(Sensor.SensorType.TEMPERATURE, gpio=2)
+----
+
+.start sensor
+[source,python]
+----
+# the sensor must be started in a separate thread, otherwise the main thread would jam
+x = threading.Thread(target=s.run, args=())
+x.start()
+----
+
+.stop sensor
+[source,python]
+----
+# send a stop request to the sensor
+s.stop()
+
+# stop the sensor thread
+x.join()
+----
