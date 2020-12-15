@@ -1,16 +1,15 @@
 from .enums import State
 import threading
-import random
 import time
 
 # abstract class, represents a controller
 class Controller:
 
-	def __init__(self, pump, sensor, nr):
+	def __init__(self, pumper, pumpNr, sensor):
 		self.lock = threading.Lock()
 		self._pumper = pumper
+		self._pumpNr = pumpNr
 		self._sensor = sensor
-		self._nr = nr
 		self._state = State.STOPPED
 		self._stop = False
 

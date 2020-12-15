@@ -1,0 +1,33 @@
+== Controller
+This ist the Controller Module.
+
+Its main content is an abstract class `Controller` and descendants which implement this class.
+A Controller links a Sensor with a pump. It describes under which Sensor conditions the pump have to be activated.
+
+=== Usage
+
+.create controller
+[source,python]
+----
+import Controller
+
+c = Controller.createController(Controller.Type.LIGHT, pumper=myPumper, pumpNr=1, sensor=myTempSensor)
+----
+
+.start controller
+[source,python]
+----
+# the controller must be started in a separate thread, otherwise the main thread will jam
+x = threading.Thread(target=c.run, args=())
+x.start()
+----
+
+.stop controller
+[source,python]
+----
+# send a stop request to the controller
+c.stop()
+
+# stop the sensor controller
+x.join()
+----

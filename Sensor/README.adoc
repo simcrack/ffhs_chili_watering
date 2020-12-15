@@ -2,6 +2,7 @@
 This ist the Sensor Module.
 
 Its main content is an abstract class `Sensor` and descendants which implement this class.
+A Sensor is alway bound to one physical mesaruing device. It runs in a separate thread and measures the current value of its device regularly.
 
 === Usage
 
@@ -10,13 +11,13 @@ Its main content is an abstract class `Sensor` and descendants which implement t
 ----
 import Sensor
 
-s = Sensor.createSensor(Sensor.SensorType.TEMPERATURE, gpio=2)
+s = Sensor.createSensor(Sensor.Type.TEMPERATURE, channel=2)
 ----
 
 .start sensor
 [source,python]
 ----
-# the sensor must be started in a separate thread, otherwise the main thread would jam
+# the sensor must be started in a separate thread, otherwise the main thread will jam
 x = threading.Thread(target=s.run, args=())
 x.start()
 ----

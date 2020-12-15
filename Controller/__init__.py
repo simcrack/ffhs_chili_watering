@@ -6,14 +6,14 @@ from .TempController import TempController
 from .TimeController import TimeController
 
 
-def createController(controllerType, pumper, sensor, nr):
+def createController(controllerType : Type, pumper, pumpNr, sensor):
 	if controllerType == Type.HUMIDITY:
-		return HumController(pumper, sensor, nr)
+		return HumController(pumper, pumpNr, sensor)
 	elif controllerType == Type.LIGHT:
-		return LightController(pumper, sensor, nr)
+		return LightController(pumper, pumpNr, sensor)
 	elif controllerType == Type.TEMPERATURE:
-		return TempController(pumper, sensor, nr)
+		return TempController(pumper, pumpNr, sensor)
 	elif controllerType == Type.TIME:
-		return TimeController(pumper, sensor, nr)
+		return TimeController(pumper, pumpNr, sensor)
 	else:
 		raise NotImplementedError

@@ -1,14 +1,13 @@
 from .enums import State
 import threading
-import random
 import time
 
 # abstract class, represents a sensor
 class Sensor:
 
-	def __init__(self, gpio):
+	def __init__(self, channel):
 		self.lock = threading.Lock()
-		self._gpio = gpio
+		self.channel = channel
 		self._state = State.STOPPED
 		self._stop = False
 		self._value = None
