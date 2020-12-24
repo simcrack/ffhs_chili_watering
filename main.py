@@ -2,6 +2,9 @@ import threading
 import sensor
 import controller
 
+import sys
+sys.path
+
 if __name__ == '__main__':
 	s = sensor.createSensor(sensor.Type.TEMPERATURE)
 	c = controller.createController(controller.Type.TEMPERATURE, 'pumper', 1, s)
@@ -13,10 +16,10 @@ if __name__ == '__main__':
 	try:
 		while True:
 			print(str(s.getState()) + " - " + str(s.getValue()))
-			
+
 	except KeyboardInterrupt:
 		print("Main Thread is going down")
-		
+
 	finally:
 		s.stop()
 		c.stop()

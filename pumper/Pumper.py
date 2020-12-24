@@ -7,7 +7,7 @@ import threading
 import time
 from datetime import datetime
 
-class __Pump(Pump):
+class _Pump(Pump):
 	"""Private class for a pump extending the Pump class in Pump.py.
 	
 	It adds values and functions which are used for the pump management.
@@ -21,10 +21,11 @@ class __Pump(Pump):
 		Attributes:
 			seconds : Number of seconds as float for which the pump shall run.
 						The pump must be stopped if it reaches 0.
+			For the rest, see base Class "Pump"
 		"""
 		Pump.__init__(self, pumpNr, gpio)
 		self.seconds = float(0)
-		self._runSince = datetime(None)
+		self._runSince : datetime = None
 
 	def __del__(self):
 		"""Stops the pump before the object is destroyed."""
@@ -104,12 +105,17 @@ class Pumper:
 
 	def addPump(self, pumpNr, gpio):
 		"""Thread safe, instantiates a pump and adds it to the managed pump 
-		list."""
+		list.
+		
+		Args:
+			pumpNr: Number of the pump (int).
+			gpio: GPIO Pin of the pump.
+		"""
 		with self.lock:
 			if pumpNr in self.pumps:
-				raise Exception("pumpNr is already in use by another pump")
+				raise ValueError("pumpNr is already in use by another pump")
 
-			self.pumps[pumpNr] = __Pump(pumpNr, gpio)
+			self.pumps[pumpNr] = _Pump(pumpNr, gpio)
 
 	def pump(self, pumpNr, seconds) -> int:
 		"""Thread safe, starts the pump and stops it after the time period 
@@ -117,14 +123,30 @@ class Pumper:
 		
 		If the pump is already running, the seconds are added to the predefined
 		ones.
+		
+		Args:
+			pumpNr: Number of the pump (int).
+			seconds: For how many seconds shall the pump be activated?
 
 		Returns:
 			New value (could be equivalent to the argument "seconds", but could
 			be also more than that.
 		"""
 		with self.lock:
-			if pumpNr not in self.pumps:
-				raise Exception("pumpNr is not defined")
+			if self.pumpExists(pumpNr):
+				raise ValueError("pumpNr is already in use")
 
 			self.pumps[pumpNr].seconds += seconds
 			return self.pumps[pumpNr].seconds
+
+	def pumpExists(self, pumpNr):
+		"""NOT THREAD SAFE, checks, if a given pumpNr already exists.
+		
+		Args:
+			pumpNr: Number of the pump (int).
+		
+		Returns:
+			True if the Pump already exists, else False.
+		"""
+		return pumpNr in self.pumps
+

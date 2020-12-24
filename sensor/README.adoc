@@ -1,8 +1,8 @@
 == Sensor
-This ist the Sensor Module.
+This ist the Sensor Package.
 
 Its main content is an abstract class `Sensor` and descendants which implement this class.
-A Sensor is alway bound to one physical mesaruing device. It runs in a separate thread and measures the current value of its device regularly.
+A Sensor is alway bound to one physical measuring device. It runs in a separate thread and measures the current value of its device regularly.
 
 === Usage
 
