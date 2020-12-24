@@ -8,8 +8,9 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
+			"program": "${file}",
+			"console": "integratedTerminal",
+			"envFile": "/data/DatenSimon/Dokumente/Berufliches/FFHS/ESHH/Projekt/Code/.env"
         }
     ]
-}
+}e
