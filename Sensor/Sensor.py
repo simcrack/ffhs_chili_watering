@@ -4,22 +4,33 @@ import time
 
 # abstract class, represents a sensor
 class Sensor:
-
+	"""Represents a sensor.
+	
+	Attributes:
+		lock: A Lock object which is used for thread safe altering of this object.
+		channel: The channel on which the physical sensor is plugged in.
+	"""
 	def __init__(self, channel):
 		self.lock = threading.Lock()
 		self.channel = channel
+		
+		# current state of the sensor
 		self._state = State.STOPPED
 		self._stop = False
 		self._value = None
 	
-	# starts the sensor
-	# this function keeps running until the function
-	# stop() is called from another thread 
 	def run(self):
+		"""Starts the sensor measure loop.
+
+		This function keeps running until the function stop() is called from
+		another thread. It measures the current sensor value regularly.
+		"""
 		self._state = State.RUNNING
 		while 1:
 			time.sleep(0.1)
-			val = self._measure() #Measuring outsyide sync block -> less blocking time
+
+			# Measuring outsyide sync block -> less blocking time
+			val = self._measure() 
 			
 			self.lock.acquire(True, -1)
 			try:
@@ -31,24 +42,29 @@ class Sensor:
 			finally:
 				self.lock.release()
 
-	# not thread safe
-	# getter for current state of the sensor
-	# does not not have to be true (due to non-thread-safety)
-	def getState(self):
+	def getState(self) -> State:
+		"""NOT THREAD SAFE getter for current state.
+		
+		Does not have to be correct (due to non-thread-safety).
+		
+		Returns:
+			State.RUNNING, if the sensor is up and running,
+			State.STOPPED else."""
 		return self._state
 
-	# thread safe
-	# getter for last measured value
 	def getValue(self):
+		"""Thread safe getter for the last measured value.
+		
+		Returns:
+			Last measured value ofthe seonsor."""
 		self.lock.acquire(True, -1)
 		try:
 			return self._value
 		finally:
 			self.lock.release()
-	
-	# thread safe
-	# stops the sensor measure loop
+		
 	def stop(self):
+		"""Thread safe, stops the sensor measure loop."""
 		self.lock.acquire(True, -1)
 		try:
 			self._stop = True
@@ -56,8 +72,11 @@ class Sensor:
 		finally:
 			self.lock.release()
 
-	# not thread safe
-	# optains and returns value from sensor
-	# must be implemented in descendant classes
 	def _measure(self):
+		"""NOT THREAD SAFE, optains and returns value from sensor.
+		
+		Returns:
+			Measured value."""
+
+		# Must be implemented in descendant classes for the specific sensor.
 		raise NotImplementedError
