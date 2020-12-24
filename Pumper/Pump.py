@@ -1,17 +1,16 @@
-# concrete class represents a pump
 class Pump:
-	
+	"""Represents a physical pump."""
 	def __init__(self, pumpNr, gpio):
 		self._pumpNr = pumpNr
 		self._gpio = gpio
 	
-	# start pumping (activate)
 	def start(self):
+		'''Activates the pump (start pumping).'''
 		# TODO: Implement
 		print("Pump " + str(self._pumpNr) + " starts pumping")
 	
-	# stop pumping (deactivate)
 	def stop(self):
+		'''Deactivates the pump (stop pumping).'''
 		# TODO: Implement
 		print("Pump " + str(self._pumpNr) + " stops pumping")
 	
