@@ -1,10 +1,14 @@
-from .enums import State
+from controller.enums import State
 import threading
 import time
 
-# abstract class, represents a controller
 class Controller:
-
+	"""Abstract class, represents a Controller.
+	
+	A Controller is the link between a Sensor and a Pump.
+	It contains a ruleset which describes, under which sensor conditions the 
+	pump should run.
+	"""
 	def __init__(self, pumper, pumpNr, sensor):
 		self.lock = threading.Lock()
 		self._pumper = pumper
@@ -13,10 +17,12 @@ class Controller:
 		self._state = State.STOPPED
 		self._stop = False
 
-	# starts the controller
-	# this function keeps running until the function
-	# stop() is called from another thread
 	def run(self):
+		"""Starts the controller loop.
+
+		This function keeps running until the function
+		stop() is called from another thread.
+		"""
 		self._state = State.RUNNING
 		while 1:
 			time.sleep(0.1)
@@ -31,15 +37,20 @@ class Controller:
 			finally:
 				self.lock.release()
 
-	# not thread safe
-	# getter for current state of the controller
-	# does not not have to be the true state (due to non-thread-safety)
+	
 	def getState(self):
+		"""NOT THREAD SAFE, getter for current state of the Controller.
+
+		Does not have to be the true state (due to non-thread-safety)
+		
+		Retuns:
+			State.RUNNING if the Controller is running
+			STATE:STOPPED else
+		"""
 		return self._state
 
-	# thread safe
-	# stops the sensor measure loop
 	def stop(self):
+		"""Thread safe, stops the controller loop"""
 		self.lock.acquire(True, -1)
 		try:
 			self._stop = True
