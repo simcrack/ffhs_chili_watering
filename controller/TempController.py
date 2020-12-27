@@ -1,5 +1,5 @@
-from controller import Controller
+from controller.Controller import MeasureController
 
 
-class TempController(Controller):
-	ruleSet = None
+class HumController(MeasureController):
+	pass

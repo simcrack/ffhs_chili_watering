@@ -1,9 +1,5 @@
-from controller import Controller
+from controller.Controller import MeasureController
 
-class _Rule:
-	def __init__(self, time, comparat, compara)
 
-class HumController(Controller):
-	def __init__(self):
-		self.ruleSet = None
-
+class HumController(MeasureController):
+	pass
