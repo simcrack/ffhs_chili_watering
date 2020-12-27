@@ -32,15 +32,12 @@ class Sensor:
 			# Measuring outsyide sync block -> less blocking time
 			val = self._measure() 
 			
-			self.lock.acquire(True, -1)
-			try:
+			with self.lock:
 				if self._stop:
 					self._state = sensor.enums.State.STOPPED
 					print(str(self) + " is going down")
 					break
 				self._value = val
-			finally:
-				self.lock.release()
 
 	def getState(self) -> sensor.enums.State:
 		"""NOT THREAD SAFE getter for current state.
@@ -57,20 +54,13 @@ class Sensor:
 		
 		Returns:
 			Last measured value ofthe seonsor."""
-		self.lock.acquire(True, -1)
-		try:
+		with self.lock:
 			return self._value
-		finally:
-			self.lock.release()
 		
 	def stop(self):
 		"""Thread safe, stops the sensor measure loop."""
-		self.lock.acquire(True, -1)
-		try:
+		with self.lock:
 			self._stop = True
-		
-		finally:
-			self.lock.release()
 
 	def _measure(self):
 		"""NOT THREAD SAFE, optains and returns value from sensor.

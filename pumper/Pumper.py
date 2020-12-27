@@ -5,7 +5,7 @@ from pumper.Pump import Pump
 from pumper.enums import State
 import threading
 import time
-from datetime import datetime
+import datetime
 
 class _Pump(Pump):
 	"""Private class for a pump extending the Pump class in Pump.py.
@@ -25,7 +25,7 @@ class _Pump(Pump):
 		"""
 		Pump.__init__(self, pumpNr, gpio)
 		self.seconds = float(0)
-		self._runSince : datetime = None
+		self._runSince: datetime.datetime = None
 
 	def __del__(self):
 		"""Stops the pump before the object is destroyed."""
@@ -43,13 +43,14 @@ class _Pump(Pump):
 
 		elif self._runSince and self.seconds > 0:
 			# Pump stopped, but has to be started
-			self._runSince = datetime.now()
+			self._runSince = datetime.datetime.now()
 			self.start()
 		
 		elif self._runSince:
 			# Pump started, seconds have to be updated
-			currentDate = datetime.now()
-			self.seconds -= datetime.microsecond(currentDate - self._runSince) / 1000
+			currentDate = datetime.datetime.now()
+			self.seconds -= datetime.datetime.microsecond(
+				currentDate - self._runSince) / 1000
 			self._runSince = currentDate
 
 	def immediateStop(self):
@@ -58,7 +59,7 @@ class _Pump(Pump):
 		Is used if the whole System is going down.
 		"""
 		self.seconds = float(0)
-		self._runSince = datetime(None)
+		self._runSince = datetime.datetime(None)
 		self.stop()
 
 class Pumper:

@@ -3,12 +3,11 @@ import sensor
 import controller
 
 import sys
-sys.path
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	s = sensor.createSensor(sensor.Type.TEMPERATURE)
-	c = controller.createController(controller.Type.TEMPERATURE, 'pumper', 1, s)
-	#x = threading.Thread(target=p.getStatus, args=(1,))
+	c = controller.createController(controller.Type.TEMPERATURE, "pumper", 1, s)
+	# x = threading.Thread(target=p.getStatus, args=(1,))
 	xs = threading.Thread(target=s.run, args=())
 	xc = threading.Thread(target=c.run, args=())
 	xs.start()
