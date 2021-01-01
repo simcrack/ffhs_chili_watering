@@ -36,12 +36,12 @@ class _Pump(Pump):
 
 		Recalculates the seconds based on the time ellapsed since the last call.
 		"""
-		if not self._runSince and self.seconds <= 0:
+		if self._runSince and self.seconds <= 0:
 			# Pump started, but has to be stopped
 			self.stop()
 			self._runSince = None
 
-		elif self._runSince and self.seconds > 0:
+		elif not self._runSince and self.seconds > 0:
 			# Pump stopped, but has to be started
 			self._runSince = datetime.datetime.now()
 			self.start()
@@ -97,7 +97,7 @@ class Pumper:
 					break
 
 				for pump in self.pumps:
-					pump.manageStartStop()
+					self.pumps[pump].manageStartStop()
 
 	def stop(self):
 		"""Thread safe, stops the sensor measure loop."""
