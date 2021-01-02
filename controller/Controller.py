@@ -85,8 +85,9 @@ class MeasureRule(controller.ruling.Rule):
 		timeTo: datetime.time,
 		comparator: controller.ruling.Comparator,
 		rValue,
+		pumpSeconds
 	):
-		controller.ruling.Rule.__init__(self, timeFrom, timeTo)
+		controller.ruling.Rule.__init__(self, timeFrom, timeTo, pumpSeconds)
 		self.comparator = comparator
 		self.rValue = rValue
 
@@ -104,10 +105,19 @@ class MeasureRule(controller.ruling.Rule):
 		else:
 			raise NotImplementedError
 
-	def getPumpSeconds(self, currentDateTime, currentValue) -> int:
-		""""""
+	def getPumpSeconds(self, currentDateTime : datetime.datetime, currentValue) -> int:
+		"""Returns the number of Second, the pump shall run.
+
+		Checks if the rule shall be applied (only once a day) and if its 
+		conditions are met.
+		
+		Args:
+			currentDatetime : Present date and time.
+			currentValie : Value returned by the sensor.
+		"""
 		if self._shouldCheck(currentDateTime):
-			return self._compare(currentValue)
+			if self._compare(currentValue):
+				return self.pumpSeconds
 
 class MeasureController(Controller):
 	"""Specialised Controller for measuring sensors like HumSensor and LightSensor.

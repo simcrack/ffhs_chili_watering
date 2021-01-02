@@ -59,7 +59,7 @@ class _Pump(Pump):
 		Is used if the whole System is going down.
 		"""
 		self.seconds = float(0)
-		self._runSince = datetime.datetime(None)
+		self._runSince: datetime.datetime = None
 		self.stop()
 
 class Pumper:
@@ -90,7 +90,7 @@ class Pumper:
 			with self.lock:
 				if self._stop:
 					for pump in self.pumps:
-						pump.immediateStop()
+						self.pumps[pump].immediateStop()
 
 					self._state = State.STOPPED
 					print(str(self) + " is going down")

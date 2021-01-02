@@ -5,38 +5,49 @@ import pumper
 import sys
 import datetime
 import time
+import persistanceLayer
+import os
 
 if __name__ == "__main__":
-	r = controller.MeasureRule(
-		datetime.time(10, 0),
-		datetime.time(11, 0),
-		controller.ruling.Comparator.LESSEROREQUAL,
-		20,
-	)
-	p = pumper.Pumper()
-	p.addPump(1, 1)
+	baseConfigPath = os.path.join(os.getcwd(), "conf")
 
-	s = sensor.createSensor(sensor.Type.TEMPERATURE, 0)
-	c = controller.createController(controller.Type.TEMPERATURE, p, 1, s)
-	# x = threading.Thread(target=p.getStatus, args=(1,))
-	xp = threading.Thread(target=p.run, args=())
-	xs = threading.Thread(target=s.run, args=())
-	xc = threading.Thread(target=c.run, args=())
-	xp.start()
-	xs.start()
-	xc.start()
+	# loadControllers(os.path.join(os.getcwd(), "conf"))
+
+	# Pumper: Load config and start the thread
+	pumper = persistanceLayer.loadPumper(baseConfigPath)
+	pumperThread = threading.Thread(target=pumper.run, args=())
+	pumperThread.start()
+
+	# Sensors: Load config and start the threads
+	sensors = persistanceLayer.loadSensors(baseConfigPath)
+	sensorThreads = {}
+	for sid in sensors:
+		sensorThreads[sid] = threading.Thread(target=sensors[sid].run, args=())
+		sensorThreads[sid].start()
+
+	# Controllers: Load config and start the threads
+	controllers = persistanceLayer.loadControllers(baseConfigPath, pumper, sensors)
+	controllerThreads = {}
+	for cid in controllers:
+		controllerThreads[cid] = threading.Thread(target=controllers[cid].run, args=())
+		controllerThreads[cid].start()
+
 	try:
-		while True:
-			time.sleep(1)
-			print(str(s.getState()) + " - " + str(s.getValue()))
+		# while True:
+		time.sleep(1)
 
 	except KeyboardInterrupt:
 		print("Main Thread is going down")
 
 	finally:
-		c.stop()
-		s.stop()
-		p.stop()
-		xc.join()
-		xp.join()
-		xs.join()
+		for cid in controllers:
+			controllers[cid].stop()
+		for sid in sensors:
+			sensors[sid].stop()
+		pumper.stop()
+
+		for cid in controllerThreads:
+			controllerThreads[cid].join()
+		for sid in sensorThreads:
+			sensorThreads[sid].join()
+		pumperThread.join()
