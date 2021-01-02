@@ -5,7 +5,9 @@ import controller.ruling
 import threading
 import time
 import datetime
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Controller:
 	"""Abstract class, represents a Controller.
@@ -39,6 +41,8 @@ class Controller:
 		This function keeps running until the function
 		stop() is called from another thread.
 		"""
+		logger.info("Contoller startet for pumpNr: %d", self._pumpNr)
+		logger.debug("Sensor channel: %d", self._sensor.channel)
 		self._state = State.RUNNING
 		while 1:
 			# sleep ensures, that other components have also a chance to lock
@@ -47,7 +51,7 @@ class Controller:
 			with self.lock:
 				if self._stop:
 					self._state = State.STOPPED
-					print(str(self) + " is going down")
+					logger.info("Controller is going down")
 					break
 				self._doWork()
 
@@ -114,11 +118,15 @@ class MeasureRule(controller.ruling.Rule):
 		Args:
 			currentDatetime : Present date and time.
 			currentValie : Value returned by the sensor.
+		
+		Returns:
+			Number of seconds if the pump shall run. If not, 0 is returned.
 		"""
 		if self._shouldCheck(currentDateTime):
 			if self._compare(currentValue):
 				return self.pumpSeconds
-
+		return 0
+		
 class MeasureController(Controller):
 	"""Specialised Controller for measuring sensors like HumSensor and LightSensor.
 	

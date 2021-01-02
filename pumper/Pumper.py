@@ -6,6 +6,9 @@ from pumper.enums import State
 import threading
 import time
 import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 class _Pump(Pump):
 	"""Private class for a pump extending the Pump class in Pump.py.
@@ -28,7 +31,11 @@ class _Pump(Pump):
 		self._runSince: datetime.datetime = None
 
 	def __del__(self):
-		"""Stops the pump before the object is destroyed."""
+		"""Stops the pump before the object is destroyed.
+		
+		This is important because otherwise, the pump could run for a long time
+		even if the software was stopped.
+		"""
 		self.stop()
 
 	def manageStartStop(self):
@@ -83,6 +90,7 @@ class Pumper:
 		It ensures that the pumps are stopped after the specified time which
 		was given in the pump() function.
 		"""
+		logger.info("Pumper startet")
 		self._state = State.RUNNING
 		while 1:
 			time.sleep(0.1)
@@ -93,7 +101,7 @@ class Pumper:
 						self.pumps[pump].immediateStop()
 
 					self._state = State.STOPPED
-					print(str(self) + " is going down")
+					logger.info("Pumper is going down")
 					break
 
 				for pump in self.pumps:
@@ -118,33 +126,33 @@ class Pumper:
 
 			self.pumps[pumpNr] = _Pump(pumpNr, gpio)
 
-	def pump(self, pumpNr, seconds) -> int:
-		"""Thread safe, starts the pump and stops it after the time period 
-		defined in "seconds" has elapsed.
+	def pump(self, pumpNr: int, seconds: int) -> int:
+		"""Thread safe, receives a pump order for a specific pump.
 		
+		The pump is started, on the next checking time (manageStartStop())
+		and will be stopped after the time period defined in "seconds" has elapsed.
 		If the pump is already running, the seconds are added to the predefined
 		ones.
 		
 		Args:
-			pumpNr: Number of the pump (int).
+			pumpNr: Number of the pump.
 			seconds: For how many seconds shall the pump be activated?
 
 		Returns:
 			New value (could be equivalent to the argument "seconds", but could
 			be also more than that.
 		"""
+		logger.info("Pump order received, pumpNr: %d, second: %d", pumpNr, seconds)
 		with self.lock:
-			if self.pumpExists(pumpNr):
-				raise ValueError("pumpNr is already in use")
 
 			self.pumps[pumpNr].seconds += seconds
 			return self.pumps[pumpNr].seconds
 
-	def pumpExists(self, pumpNr):
+	def pumpExists(self, pumpNr: int) -> bool:
 		"""NOT THREAD SAFE, checks, if a given pumpNr already exists.
 		
 		Args:
-			pumpNr: Number of the pump (int).
+			pumpNr: Number of the pump.
 		
 		Returns:
 			True if the Pump already exists, else False.

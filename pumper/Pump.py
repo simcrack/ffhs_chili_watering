@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 class Pump:
 	"""Represents a physical Pump.
 	
@@ -15,12 +19,12 @@ class Pump:
 	def start(self):
 		'''Activates the pump (start pumping).'''
 		# TODO: Implement
-		print("Pump " + str(self._pumpNr) + " starts pumping")
+		logger.info("Pump received start request, pumpNr: %d", self._pumpNr)
 	
 	def stop(self):
 		'''Deactivates the pump (stop pumping).'''
 		# TODO: Implement
-		print("Pump " + str(self._pumpNr) + " stops pumping")
+		logger.info("Pump received stop request, pumpNr: %d", self._pumpNr)
 	
 	def getPumpNr(self):
 		return self._pumpNr

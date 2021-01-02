@@ -27,7 +27,7 @@ def loadControllers(
 			config = configparser.ConfigParser()
 			config.read(entry)
 
-			if not config.has_section("DEFAULT"):
+			if not config.has_option("DEFAULT", "Nr"):
 				continue
 
 			# The Default section in the config file describes the controller

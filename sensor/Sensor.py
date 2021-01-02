@@ -1,6 +1,9 @@
 import sensor.enums
 import threading
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 # abstract class, represents a sensor
 class Sensor:
@@ -25,17 +28,18 @@ class Sensor:
 		This function keeps running until the function stop() is called from
 		another thread. It measures the current sensor value regularly.
 		"""
+		logger.info("Sensor started on channel: %d", self.channel)
 		self._state = sensor.enums.State.RUNNING
 		while 1:
 			time.sleep(0.1)
 
 			# Measuring outsyide sync block -> less blocking time
-			val = self._measure() 
-			
+			val = self._measure()
+			logger.debug("Value measured: %f", val)
 			with self.lock:
 				if self._stop:
 					self._state = sensor.enums.State.STOPPED
-					print(str(self) + " is going down")
+					logger.info("Sensor is going down")
 					break
 				self._value = val
 
