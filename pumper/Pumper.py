@@ -18,7 +18,7 @@ class _Pump(Pump):
 	lock (in Pumper class)"
 	"""
 
-	def __init__(self, pumpNr, gpio):
+	def __init__(self, pumpNr: int, gpio: str):
 		"""See base class
 		
 		Attributes:

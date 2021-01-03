@@ -13,7 +13,7 @@ class Sensor:
 		lock: A Lock object which is used for thread safe altering of this object.
 		channel: The channel on which the physical sensor is plugged in.
 	"""
-	def __init__(self, channel):
+	def __init__(self, channel: str):
 		self.lock = threading.Lock()
 		self.channel = channel
 		
@@ -28,7 +28,7 @@ class Sensor:
 		This function keeps running until the function stop() is called from
 		another thread. It measures the current sensor value regularly.
 		"""
-		logger.info("Sensor started on channel: %d", self.channel)
+		logger.info("Sensor started on channel: %s", self.channel)
 		self._state = sensor.enums.State.RUNNING
 		while 1:
 			time.sleep(0.1)

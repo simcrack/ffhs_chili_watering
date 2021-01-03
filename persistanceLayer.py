@@ -100,7 +100,7 @@ def loadSensors(basePath: str) -> dict[sensor.Sensor]:
 			for section in config.sections():
 				sensors[config.getint(section, "Nr")] = sensor.createSensor(
 					sensor.enums.Type.fromNumber(config.getint(section, "Type")),
-					config.getint(section, "Channel"),
+					config.get(section, "Channel"),
 				)
 	return sensors
 

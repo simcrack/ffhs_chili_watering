@@ -8,7 +8,7 @@ from sensor.TestHumSensor import TestHumSensor
 from sensor.TestLightSensor import TestLightSensor
 
 # factory function for sensors
-def createSensor(sensorType: Type, channel: int = 0):
+def createSensor(sensorType: Type, channel: str = "0"):
 	"""Factory function for Sensor objects.
 
 	Args:

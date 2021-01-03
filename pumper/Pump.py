@@ -1,5 +1,6 @@
 import logging
-import RPi.GPIO as GPIO    # Import Raspberry Pi GPIO library
+
+import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
 
 logger = logging.getLogger(__name__)
 
@@ -8,12 +9,12 @@ class Pump:
 	"""Represents a physical Pump.
 	
 	"""
-	def __init__(self, pumpNr, gpio):
+	def __init__(self, pumpNr:int, gpio:str):
 		"""Intatiates a Pump.
 		
 		Attributes:
 			_pumpNr : Nr (int)
-			_gpio : GPIO on which the pump is attached
+			_gpio : GPIO on which the pump is attached (as string)
 		"""
 		self._pumpNr = pumpNr
 		self._gpio = int(gpio)

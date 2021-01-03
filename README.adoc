@@ -6,9 +6,47 @@ This project ist related to the course ES&HH of the FFHS.
 
 
 === Requirements
-SPIDEV > https://tutorials-raspberrypi.de/raspberry-pi-mcp3008-analoge-signale-auslesen/
+The following python packages ar needed:
 
-=== Install Instructions
+* py-spidev (see https://tutorials-raspberrypi.de/raspberry-pi-mcp3008-analoge-signale-auslesen/)
+* cherrypy (web server)
+* standard python library packages (configparser, datetime, enum, logging, os, signal, sys, threading, time, types, unittest)
+* RPi.GPIO (or fake-rpigpio for testing purposes)
+
+=== Installation Instructions
+
+[source,bash]
+----
+git clone https://github.com/simcrack/ffhs_chili_watering.git
+
+# copy the conf folder to your desired location (/var/lib/chilwater/conf/ or /etc/chilwater/)
+cp ffhs_chili_watering/conf /val/lib/chilwater
+----
+
+==== Install Requirements
+
+.py-spidev
+[source,bash]
+----
+wget https://github.com/doceme/py-spidev/archive/master.zip 
+unzip master.zip
+cd py-spidev-master
+
+# you have to install python3-devel for this (apt install python3-devel)
+sudo python setup.py install
+----
+
+.cherrypi
+[source,bash]
+----
+pip install cherrypy
+
+# for production
+pip install RPi.GPIO
+
+# for testing
+# pip install fake-rpigpio
+----
 
 ==== Configuration
 You can define the base directory by changing the following line in the base configuration file:
@@ -16,11 +54,26 @@ You can define the base directory by changing the following line in the base con
 .settings.py
 [source,python]
 ----
-# default configuration directory is /etc/conf/chilwater/
+# default configuration directory is /var/lib/chilwater/conf/ or /etc/chilwater/
 BASECONFDIR = os.path.join(os.getcwd(), "conf")
 ----
 
-All other settings can be defined in the conf file 
+All other settings can be defined in the conf files
+
+.server.conf
+[source]
+----
+[DEFAULT]
+port = 9090
+host = 127.0.0.1
+authEnabled = False
+authRealm = localhost
+# baseWebDir = /var/www/html/cws
+
+[admin]
+password = admin
+----
+
 
 
 
