@@ -4,4 +4,18 @@
 This project ist related to the course ES&HH of the FFHS.
 
 === Install Instructions
-TODO
+
+==== Configuration
+You can define the base directory by changing the following line in the base configuration file:
+
+.settings.py
+[source,python]
+----
+# default configuration directory is /etc/conf/chilwater/
+BASECONFDIR = os.path.join(os.getcwd(), "conf")
+----
+
+All other settings can be defined in the conf file 
+
+
+
