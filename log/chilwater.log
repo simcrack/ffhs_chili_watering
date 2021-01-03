@@ -1,15 +1,15 @@
-2021-01-02 17:55:58 MainThread   INFO     Test
-2021-01-02 17:55:58 pumper       INFO     Pumper startet
-2021-01-02 17:55:58 sensor_1     INFO     Sensor started on channel: 1
-2021-01-02 17:55:58 sensor_2     INFO     Sensor started on channel: 2
-2021-01-02 17:55:58 controller_2 INFO     Contoller startet for pumpNr: 2
-2021-01-02 17:55:58 controller_1 INFO     Contoller startet for pumpNr: 1
-2021-01-02 17:56:00 controller_2 INFO     Controller is going down
-2021-01-02 17:56:00 controller_1 INFO     Controller is going down
-2021-01-02 17:56:00 sensor_2     INFO     Sensor is going down
-2021-01-02 17:56:00 sensor_1     INFO     Sensor is going down
-2021-01-02 17:56:00 pumper       INFO     Pump received stop request, pumpNr: 1
-2021-01-02 17:56:00 pumper       INFO     Pump received stop request, pumpNr: 2
-2021-01-02 17:56:00 pumper       INFO     Pumper is going down
-2021-01-02 17:56:00 MainThread   INFO     Pump received stop request, pumpNr: 1
-2021-01-02 17:56:00 MainThread   INFO     Pump received stop request, pumpNr: 2
+2021-01-02 18:20:56 MainThread   INFO     Test
+2021-01-02 18:20:56 pumper       INFO     Pumper startet
+2021-01-02 18:20:56 sensor_1     INFO     Sensor started on channel: 1
+2021-01-02 18:20:56 sensor_2     INFO     Sensor started on channel: 2
+2021-01-02 18:20:56 controller_2 INFO     Contoller startet for pumpNr: 2
+2021-01-02 18:20:56 controller_1 INFO     Contoller startet for pumpNr: 1
+2021-01-02 18:20:58 controller_1 INFO     Controller is going down
+2021-01-02 18:20:58 sensor_2     INFO     Sensor is going down
+2021-01-02 18:20:58 sensor_1     INFO     Sensor is going down
+2021-01-02 18:20:58 pumper       INFO     Pump received stop request, pumpNr: 1
+2021-01-02 18:20:58 pumper       INFO     Pump received stop request, pumpNr: 2
+2021-01-02 18:20:58 pumper       INFO     Pumper is going down
+2021-01-02 18:20:58 controller_2 INFO     Controller is going down
+2021-01-02 18:20:58 MainThread   INFO     Pump received stop request, pumpNr: 1
+2021-01-02 18:20:58 MainThread   INFO     Pump received stop request, pumpNr: 2

@@ -2,10 +2,11 @@
 """
 import os
 import configparser
+import datetime
+
 import pumper
 import sensor
 import controller
-import datetime
 
 
 def loadControllers(
@@ -102,3 +103,35 @@ def loadSensors(basePath: str) -> dict[sensor.Sensor]:
 					config.getint(section, "Channel"),
 				)
 	return sensors
+
+
+def getWebServerConf(basePath: str) -> dict:
+	"""Loads the configuration file for the web server.
+
+	Args:
+		basePath : The base dir of all conf files (/etc/chilwater/).
+
+	Returns:
+		A dict of configuration parameters with the following structure:
+		host : Hostname or IP address of the web server.
+		port : Port number of the web server.
+		... : Additional parameters.
+		userPassword : A dict of usernames and their passwords (username as key).
+	"""
+	ret = {}
+	config = configparser.ConfigParser()
+	config.read(os.path.join(basePath, "server.conf"))
+
+	ret["host"] = config.get("DEFAULT", "host", fallback="127.0.0.1")
+	ret["port"] = config.getint("DEFAULT", "port", fallback=8080)
+	ret["authEnabled"] = config.getboolean("DEFAULT", "authEnabled", fallback=False)
+	ret["authRealm"] = config.get("DEFAULT", "authRealm", fallback="localhost")
+	ret["baseWebDir"] = config.get(
+		"DEFAULT", "baseDir", fallback=os.path.join(basePath, "..", "web")
+	)
+
+	ret["userPasswords"] = {}
+	for user in config.sections():
+		ret["userPasswords"][user] = config.get(user, "password")
+
+	return ret
