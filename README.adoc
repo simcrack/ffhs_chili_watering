@@ -1,7 +1,12 @@
 == Cili Watering System
 
 === Abstract
+
 This project ist related to the course ES&HH of the FFHS.
+
+
+=== Requirements
+SPIDEV > https://tutorials-raspberrypi.de/raspberry-pi-mcp3008-analoge-signale-auslesen/
 
 === Install Instructions
 

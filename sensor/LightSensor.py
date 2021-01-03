@@ -1,5 +1,5 @@
 from sensor import Sensor
-from sensor import MCP3008
+from lib.adc import MCP3008
 
 
 class LightSensor(Sensor):
