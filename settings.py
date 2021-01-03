@@ -7,7 +7,7 @@ It is used for the following purposes:
 import os
 import logging
 
-BASECONFDIR = os.path.join(os.getcwd(), "conf")
+BASECONFDIR = "/var/lib/chilwater/conf/" # os.path.join(os.getcwd(), "conf")
 
 TESTFILE = os.path.join(BASECONFDIR, "testSetting.conf")
 
