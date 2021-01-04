@@ -38,6 +38,21 @@ class Comparator(enum.Enum):
 	GREATEROREQUAL = 4
 	GREATER = 5
 
+	def asString(self) -> str:
+		"""Gets the string representation of a Comparator."""
+		if self == self.LESSER:
+			return "<"
+		elif self == self.LESSEROREQUAL:
+			return "<="
+		elif self == self.EQUAL:
+			return "="
+		elif self == self.GREATEROREQUAL:
+			return ">="
+		elif self == self.GREATER:
+			return ">"
+		else:
+			raise Exception("Unknown Comparator value")
+
 	@classmethod
 	def fromString(cls, comparator: str):
 		"""Converts a string into a Comparator.

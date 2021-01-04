@@ -10,6 +10,7 @@ The following python packages ar needed:
 
 * py-spidev (see https://tutorials-raspberrypi.de/raspberry-pi-mcp3008-analoge-signale-auslesen/)
 * cherrypy (web server)
+* dominate (HTML Builder)
 * standard python library packages (configparser, datetime, enum, logging, os, signal, sys, threading, time, types, unittest)
 * RPi.GPIO (or fake-rpigpio for testing purposes)
 
@@ -40,6 +41,7 @@ sudo python setup.py install
 [source,bash]
 ----
 pip install cherrypy
+pip install dominate
 
 # for production
 pip install RPi.GPIO

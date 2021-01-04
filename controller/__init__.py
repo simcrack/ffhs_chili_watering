@@ -10,7 +10,7 @@ from controller.HumController import HumController
 from controller.LightController import LightController
 from controller.TempController import TempController
 from controller.TimeController import TimeController
-from controller.Controller import MeasureRule
+from controller.ruling import MeasureRule
 import controller.ruling
 
 def createController(controllerType : Type, pumper, pumpNr, sensor):

@@ -148,11 +148,29 @@ class Pumper:
 			self.pumps[pumpNr].seconds += seconds
 			return self.pumps[pumpNr].seconds
 
+	def getPumpState(self, pumpNr: int) -> str:
+		"""NOT THREAD SAFE, gets a string representation of the current Pump state.
+
+		Args:
+			pumpNr: Number of the Pump.
+
+		Returns:
+			A String containing the current pump state, the datetime when the
+			Pump ran lastly and the number of second it hasnt run yet.
+		"""
+		ret = "Pumping" if self.pumps[pumpNr].isPumping() else "Stopped"
+		if self.pumps[pumpNr]._runSince:
+			ret += " last start: {:%Y-%m-%d %H:%M:%S}".format(self.pumps[pumpNr]._runSince) 
+		if self.pumps[pumpNr].seconds > 0:
+			ret += " seconds remaining: {}".format(self.pumps[pumpNr].seconds)
+		return ret
+
+
 	def pumpExists(self, pumpNr: int) -> bool:
 		"""NOT THREAD SAFE, checks, if a given pumpNr already exists.
 		
 		Args:
-			pumpNr: Number of the pump.
+			pumpNr: Number of the Pump.
 		
 		Returns:
 			True if the Pump already exists, else False.

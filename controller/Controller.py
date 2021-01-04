@@ -22,18 +22,22 @@ class Controller:
 		
 		Args:
 			pumper: A reference to an object og the Pumper class.
-			pumpNr: The Pump, to which the sensor shall be bound.
-			sensor: The Sensort which shall be bound to the Pump.
+			pumpNr: The number of the pump which is controlled by this controller.
+			sensor: The Sensor which shall be bound to the Pump.
 
 		Atributes:
 			lock: A lock object for concurrent access on the object.
+			pumpNr: See Argument pumpNr.
+			sensor: See Argument sensor. 
+	        ruleSet: a list of MeasureRule instances.
 		"""
 		self.lock = threading.Lock()
 		self._pumper = pumper
-		self._pumpNr = pumpNr
-		self._sensor = sensor
+		self.pumpNr = pumpNr
+		self.sensor = sensor
 		self._state = State.STOPPED
 		self._stop = False
+		self.ruleSet = []
 
 	def run(self):
 		"""Starts the controller loop.
@@ -41,8 +45,8 @@ class Controller:
 		This function keeps running until the function
 		stop() is called from another thread.
 		"""
-		logger.info("Contoller startet for pumpNr: %d", self._pumpNr)
-		logger.debug("Sensor channel: %d", self._sensor.channel)
+		logger.info("Contoller startet for pumpNr: %d", self.pumpNr)
+		logger.debug("Sensor channel: %d", self.sensor.channel)
 		self._state = State.RUNNING
 		while 1:
 			# sleep ensures, that other components have also a chance to lock
@@ -82,50 +86,6 @@ class Controller:
 		with self.lock:
 			self._stop = True
 
-class MeasureRule(controller.ruling.Rule):
-	def __init__(
-		self,
-		timeFrom: datetime.time,
-		timeTo: datetime.time,
-		comparator: controller.ruling.Comparator,
-		rValue,
-		pumpSeconds
-	):
-		controller.ruling.Rule.__init__(self, timeFrom, timeTo, pumpSeconds)
-		self.comparator = comparator
-		self.rValue = rValue
-
-	def _compare(self, currentValue):
-		if self.comparator == controller.ruling.Comparator.LESSER:
-			return currentValue < self.rValue
-		elif self.comparator == controller.ruling.Comparator.LESSEROREQUAL:
-			return currentValue <= self.rValue
-		elif self.comparator == controller.ruling.Comparator.EQUAL:
-			return currentValue == self.rValue
-		elif self.comparator == controller.ruling.Comparator.GREATEROREQUAL:
-			return currentValue >= self.rValue
-		elif self.comparator == controller.ruling.Comparator.GREATER:
-			return currentValue > self.rValue
-		else:
-			raise NotImplementedError
-
-	def getPumpSeconds(self, currentDateTime : datetime.datetime, currentValue) -> int:
-		"""Returns the number of Second, the pump shall run.
-
-		Checks if the rule shall be applied (only once a day) and if its 
-		conditions are met.
-		
-		Args:
-			currentDatetime : Present date and time.
-			currentValie : Value returned by the sensor.
-		
-		Returns:
-			Number of seconds if the pump shall run. If not, 0 is returned.
-		"""
-		if self._shouldCheck(currentDateTime):
-			if self._compare(currentValue):
-				return self.pumpSeconds
-		return 0
 		
 class MeasureController(Controller):
 	"""Specialised Controller for measuring sensors like HumSensor and LightSensor.
@@ -138,13 +98,12 @@ class MeasureController(Controller):
 
 		Is derived from the Controller class.
 
-		Attribute:
-		        ruleSet: a list of MeasureRule instances.
-		        Others, see base class Controller."""
+		Attributes:
+	        See base class Controller.
+		"""
 		Controller.__init__(self, pumper, pumpNr, sensor)
-		self.ruleSet = []
 
-	def addRule(self, rule: MeasureRule):
+	def addRule(self, rule: controller.ruling.MeasureRule):
 		"""Thread safe, adds an additional Rule to the Controller."""
 		with self.lock:
 			self.ruleSet.append(rule)
@@ -156,7 +115,7 @@ class MeasureController(Controller):
 		"""
 		for rule in self.ruleSet:
 			seconds = rule.getPumpSeconds(
-				datetime.datetime.now(), self._sensor.getValue()
+				datetime.datetime.now(), self.sensor.getValue()
 			)
 			if seconds > 0:
-				self._pumper.pump(self._pumpNr, seconds)
+				self._pumper.pump(self.pumpNr, seconds)

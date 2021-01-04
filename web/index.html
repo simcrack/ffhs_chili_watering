@@ -1,36 +1,43 @@
+<!DOCTYPE html>
 <html>
 
 <head>
 	<title>Chili Watering System</title>
+	<style>
+		.button {
+			display: block;
+			width: 115px;
+			height: 15px;
+			background: #4E9CAF;
+			padding: 10px;
+			text-align: center;
+			border-radius: 5px;
+			color: white;
+			font-weight: bold;
+			line-height: 15px;
+		}
+	</style>
 </head>
 
 <body>
 	<h1>Overview</h1>
 
-	<h2>Sensoren</h2>
-	<table>
-		<tbody>
-			<th>
-			<td>Nr</td>
-			<td>Channel</td>
-			<td>Typ</td>
-			</th>
-			<!--{{SensorRows}}-->
-		</tbody>
-	</table>
+	<div>
+		<h2>Controllers</h2>
+		<!--{{ControllerRows}}-->
+	</div>
 
-	<h2>Cotroller</h2>
-	<table>
-		<tbody>
-			<th>
-			<td>Nr</td>
-			<td>Pumpe</td>
-			<td>Sensor</td>
-			<td>Regeln</td>
-			</th>
-			<!--{{ControllerRows}}-->
-		</tbody>
-	</table>
+	<div>
+		<h3>Rules</h3>
+		<!--{{RuleRows}}-->
+	</div>
+
+	<div>
+		<h2>Logfile</h2>
+		<!--{{Log}}-->
+	</div>
+
+
 </body>
 
 </html>

@@ -8,7 +8,7 @@ from sensor.TestHumSensor import TestHumSensor
 from sensor.TestLightSensor import TestLightSensor
 
 # factory function for sensors
-def createSensor(sensorType: Type, channel: str = "0"):
+def createSensor(nr: int, sensorType: Type, channel: str = "0"):
 	"""Factory function for Sensor objects.
 
 	Args:
@@ -19,16 +19,16 @@ def createSensor(sensorType: Type, channel: str = "0"):
 		A Sensor instance of the given type. The Sensor is not startet yet.
 	"""
 	if sensorType == Type.TEMPERATURE:
-		return TempSensor(channel)
+		return TempSensor(nr, channel)
 	elif sensorType == Type.HUMIDITY:
-		return HumSensor(channel)
+		return HumSensor(nr, channel)
 	elif sensorType == Type.LIGHT:
-		return LightSensor(channel)
+		return LightSensor(nr, channel)
 	if sensorType == Type.TEST_TEMPERATURE:
-		return TestTempSensor(channel)
+		return TestTempSensor(nr, channel)
 	elif sensorType == Type.TEST_HUMIDITY:
-		return TestHumSensor(channel)
+		return TestHumSensor(nr, channel)
 	elif sensorType == Type.TEST_LIGHT:
-		return TestLightSensor(channel)
+		return TestLightSensor(nr, channel)
 	else:
 		raise NotImplementedError

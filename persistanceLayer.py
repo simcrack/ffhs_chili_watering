@@ -43,6 +43,7 @@ def loadControllers(
 			for section in config.sections():
 				controllers[config.getint("DEFAULT", "Nr")].addRule(
 					controller.MeasureRule(
+						section,
 						datetime.datetime.strptime(
 							config.get(section, "TimeFrom"), "%H:%M:%S"
 						).time(),
@@ -57,6 +58,87 @@ def loadControllers(
 					)
 				)
 	return controllers
+
+
+def _getControllerFile(basePath: str, controllerNr: int) -> str:
+	"""Helper function, gets the file path of a specific controller.
+
+	Args:
+		basePath : The base dir of all conf files (/etc/chilwater/).
+		controllerNr : The number of the controller.
+
+	Return:
+		The full path of the configuration file if one was found, else None.
+	"""
+	for entry in os.scandir(os.path.join(basePath, "controllers")):
+		if entry.path.endswith(".conf") and entry.is_file():
+			config = configparser.ConfigParser()
+			config.read(entry)
+
+			if not config.has_option("DEFAULT", "Nr"):
+				continue
+			if config.getint("DEFAULT", "Nr") == controllerNr:
+				return entry
+
+	return None
+
+
+def deleteController(basePath: str, controllerNr: int):
+	"""Removes a Controller configuration from the config file.
+
+	Args:
+		basePath : The base dir of all conf files (/etc/chilwater/).
+		controllerNr : The number of the controller which shall be removed.
+	"""
+	f = _getControllerFile(basePath, controllerNr)
+	if not f:
+		raise Exception("Conf file not found")
+	os.remove(f)
+
+
+def deleteRule(basePath: str, controllerNr: int, rule: str):
+	"""Removes a Rule from a Controller config file.
+
+	Args:
+		basePath : The base dir of all conf files (/etc/chilwater/).
+		controllerNr : The number of the controller.
+		rule: The name of the rule which shall be removed.
+	"""
+	f = _getControllerFile(basePath, controllerNr)
+	if not f:
+		raise Exception("Conf file not found")
+
+	config = configparser.ConfigParser()
+	config.read(f)
+
+	config.remove_section(rule)
+	with open(f, "w") as fh:
+		config.write(fh)
+
+
+def editRule(basePath: str, controllerNr: int, rule: str, cfg: dict):
+	"""Adds or edits a Rule from a Controller config file.
+
+	Args:
+		basePath : The base dir of all conf files (/etc/chilwater/).
+		controllerNr : The number of the controller.
+		rule: The name of the rule which shall be altered.
+			If the rule does not exists, a new rule is created.
+	"""
+	f = _getControllerFile(basePath, controllerNr)
+	if not f:
+		raise Exception("Conf file not found")
+
+	config = configparser.ConfigParser()
+	config.read(f)
+	if not config.has_section(rule):
+		config.add_section(rule)
+
+	for e in cfg:
+		config.set(rule, e, str(cfg[e]))
+
+	with open(f, "w") as fh:
+		config.write(fh)
 
 
 def loadPumper(basePath: str) -> pumper.Pumper:
@@ -99,6 +181,7 @@ def loadSensors(basePath: str) -> dict[sensor.Sensor]:
 
 			for section in config.sections():
 				sensors[config.getint(section, "Nr")] = sensor.createSensor(
+					config.getint(section, "Nr"),
 					sensor.enums.Type.fromNumber(config.getint(section, "Type")),
 					config.get(section, "Channel"),
 				)

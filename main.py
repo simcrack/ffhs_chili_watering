@@ -8,16 +8,6 @@ import logging
 
 import settings
 
-
-# Automaticall switch from RPi.GPIO to fake_rpigio in non-RPi environments
-try:
-	import RPi.GPIO
-except (RuntimeError, ModuleNotFoundError):
-	import fake_rpigpio.utils
-
-	fake_rpigpio.utils.install()
-	logging.getLogger(__name__).warning("Fake-RPi.GPIO was loaded")
-
 import sensor
 import pumper
 import controller
@@ -28,6 +18,7 @@ import web.frontend
 class Main:
 	def __init__(self):
 		self._stopRequest = False
+		self._reloadRequest = True
 		signal.signal(signal.SIGINT, self._shutdown)
 		signal.signal(signal.SIGTERM, self._shutdown)
 
@@ -36,6 +27,11 @@ class Main:
 	def _shutdown(self, signum, frame):
 		self._logger.info("Signal received, signum: %d", signum)
 		self._stopRequest = True
+
+	def reload(self):
+		"""Reloads config and restart all threads."""
+		self._stopRequest = True
+		self._reloadRequest = True
 
 	def run(self):
 		self._logger.info("#########START#########")
@@ -67,16 +63,12 @@ class Main:
 			)
 			self._controllerThreads[cid].start()
 
-		# Web frontend
-		self._webThread = threading.Thread(
-			target=web.frontend.run, args=({"main": self}), name="web_frontend"
-		)
-		self._webThread.start()
-
 		try:
+			self.running = True
 			while not self._stopRequest:
 				time.sleep(1)
 			self._logger.info("Stop request received by SIGINT/SIGTERM")
+			self.running = False
 
 		except KeyboardInterrupt:
 			self._logger.info("Stop request received by keyboard interrupt")
@@ -97,12 +89,21 @@ class Main:
 			self._sensorThreads[sid].join()
 		self._pumperThread.join()
 
-		web.frontend.stop()
-		self._webThread.join()
-
 		self._logger.info("Main thread is goind down")
 
 
 if __name__ == "__main__":
 	main = Main()
-	main.run()
+
+	# Web frontend
+	web = web.frontend.Frontend(main)
+	webThread = threading.Thread(target=web.run, args=(), name="web_frontend")
+	webThread.start()
+
+	while main._reloadRequest:
+		main._reloadRequest = False
+		main._stopRequest = False
+		main.run()
+
+	web.stop()
+	webThread.join()
