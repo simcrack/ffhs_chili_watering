@@ -35,9 +35,8 @@ class Frontend:
 			username in self._userPassword and self._userPassword[username] == password
 		)
 
-
 	@cherrypy.expose
-	def index(self, controllerNr:str="0"):
+	def index(self, controllerNr: str = "0"):
 		html = ""
 		with open(os.path.join(self._baseWebDir, "index.html")) as f:
 			html = f.read()
@@ -47,41 +46,46 @@ class Frontend:
 		html = html.replace(r"<!--{{Log}}-->", self.getLog().render())
 
 		if controllerNr != "0":
-			html = html.replace(r"<!--{{RuleRows}}-->", self.getRules(int(controllerNr)).render())
+			html = html.replace(
+				r"<!--{{RuleRows}}-->", self.getRules(int(controllerNr)).render()
+			)
 
 		return html
 
 	@cherrypy.expose
-	def deleteRule(
-		self,
-		controllerNr: int = "0",
-		ruleName: str = ""
-	):
+	def deleteRule(self, controllerNr: str = "0", ruleName: str = ""):
+		"""Deletes a rule from the config file and reload the backend.
+
+		Args:
+			controllerNr : number of the controller AS STRING, whichs Rule shall be deleted.
+			ruleName : Name of the rule which shall be deleted.
+
+		Return:
+			Nothing, redirects to index() with cherrypy.HTTPRedirect.
+		"""
 		persistanceLayer.deleteRule(settings.BASECONFDIR, int(controllerNr), ruleName)
 		self._main.reload()
-		while not self._main.running and self.main._reloadRequest:
-			time.sleep(0.1)
-			# Wait till service restarted
-		raise cherrypy.HTTPRedirect("index?controllerNr=" + controllerNr)
+		raise cherrypy.HTTPRedirect("index")
 
 	@cherrypy.expose
-	def editRule(
-		self,
-		controllerNr: int = 0,
-		action: str = "list",
-		rule: str = "",
+	def editRule(self, controllerNr: str, ruleName: str, **kwargs):
+		"""
+
 		timeFrom: str = "",
 		timeTo: str = "",
 		comparator: str = "",
 		rightValue: float = 0,
 		pumpSeconds: int = 0,
-	):
-		if controllerNr == 0:
+		"""
+		if controllerNr == "0":
 			return self.index()
-		if action == "edit":
-			pass
-		elif action == "delete":
-			pass
+
+		persistanceLayer.editRule(
+			settings.BASECONFDIR, int(controllerNr), ruleName, **kwargs
+		)
+
+		self._main.reload()
+		raise cherrypy.HTTPRedirect("index")
 
 	def run(self):
 		cherrypy.quickstart(self, "/", self._webConfig)
@@ -101,7 +105,7 @@ class Frontend:
 					th("SensorNr"),
 					th("SensorType"),
 					th("SensorValue"),
-					th("")
+					th(""),
 				)
 			)
 		)
@@ -115,28 +119,39 @@ class Frontend:
 					td(c.sensor.nr),
 					td(c.sensor.__class__.__name__),
 					td(c.sensor.getValue()),
-					td(a("Show rules", href="index?controllerNr=" + str(ctrl), cls="button")),
-					id="controller_" + str(ctrl),
+					td(
+						input_(
+							value="Show rules",
+							onclick="window.location.href='/index?controllerNr="
+							+ str(ctrl)
+							+ "'",
+							type="submit",
+							cls="button",
+							id="controller_" + str(ctrl),
+						)
+					),
 				)
 		return tbl
 
-	def getRules(self, controllerNr:int):
+	def getRules(self, controllerNr: int):
 		"""Gets a HTML table representation of all rules.
-		
+
 		Args:
 			controllerNr: Number of the controller.
 		"""
-		tbl = table(id="rules")
+		tbl = div(id="rules", cls="table")
 		tbl.add(
 			thead(
-				tr(
-					th("Name"),
-					th("Time From"),
-					th("Time To"),
-					th("Comparator"),
-					th("Right Value"),
-					th("Pump Seconds"),
-					th("")
+				div(
+					span("Name", cls="th len-long type-str"),
+					span("From", cls="th len-mid type-time"),
+					span("To", cls="th len-mid type-time"),
+					span("", cls="th len-short type-str"),
+					span("Right Value", cls="th len-mid time-dec"),
+					span("Seconds", cls="th len-mshort time-int"),
+					span("", cls="th"),
+					span("", cls="th"),
+					cls="tr",
 				)
 			)
 		)
@@ -148,21 +163,68 @@ class Frontend:
 					# TODO Implement Rules for TimeSensor
 					raise NotImplementedError
 
-				tr(
-					td(rl.name),
-					td(str(rl.timeFrom)),
-					td(str(rl.timeTo)),
-					td(rl.comparator.asString()),
-					td(str(rl.rValue)),
-					td(str(rl.pumpSeconds)),
-					td(a(
-						"Delete rule",
-						cls="button", 
-						href="deleteRule?controllerNr=" + str(controllerNr) + "&ruleName=" + rl.name)),
+				form(
+					input_(
+						type="text",
+						value=rl.name,
+						name="ruleName",
+						cls="td len-long type-str",
+					),
+					input_(
+						type="time",
+						value=rl.timeFrom,
+						name="timeFrom",
+						cls="td len-mid type-time",
+					),
+					input_(
+						type="time",
+						value=rl.timeTo,
+						name="timeTo",
+						cls="td len-mid type-time",
+					),
+					select(
+						option("<"),
+						option("<="),
+						option("="),
+						option(">="),
+						option(">"),
+						value=rl.comparator.asString(),
+						name="comparator",
+						cls="td len-short type-str",
+					),
+					input_(
+						type="number",
+						value=rl.rValue,
+						name="rightValue",
+						cls="td len-mid type-dec",
+					),
+					input_(
+						type="number",
+						value=rl.pumpSeconds,
+						name="pumpSeconds",
+						min="0",
+						max="3600",
+						cls="td len-mshort type-int",
+					),
+					input_(type="hidden", name="controllerNr", value=controllerNr),
+					input_(value="Save Changes", type="submit", cls="td button"),
+					input_(
+						value="Delete rule",
+						onclick="window.location.href='/deleteRule?controllerNr="
+						+ str(controllerNr)
+						+ "&ruleName="
+						+ rl.name
+						+ "'",
+						type="button",
+						cls="td button",
+					),
 					id="rule_" + str(controllerNr) + "_" + str(rl.name),
+					cls="tr",
+					action="/editRule",
 				)
+
 		return tbl
-	
+
 	def getLog(self):
 		"""Returns a HTML list representation of the latest log entries."""
 		ls = ol(id="log")

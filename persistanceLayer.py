@@ -116,14 +116,15 @@ def deleteRule(basePath: str, controllerNr: int, rule: str):
 		config.write(fh)
 
 
-def editRule(basePath: str, controllerNr: int, rule: str, cfg: dict):
+def editRule(basePath: str, controllerNr: int, ruleName: str, **kwargs):
 	"""Adds or edits a Rule from a Controller config file.
 
 	Args:
 		basePath : The base dir of all conf files (/etc/chilwater/).
 		controllerNr : The number of the controller.
-		rule: The name of the rule which shall be altered.
+		ruleName : The name of the rule which shall be altered (=section name).
 			If the rule does not exists, a new rule is created.
+		**kwargs : A dict with all options that shall be set.
 	"""
 	f = _getControllerFile(basePath, controllerNr)
 	if not f:
@@ -131,11 +132,11 @@ def editRule(basePath: str, controllerNr: int, rule: str, cfg: dict):
 
 	config = configparser.ConfigParser()
 	config.read(f)
-	if not config.has_section(rule):
-		config.add_section(rule)
+	if not config.has_section(ruleName):
+		config.add_section(ruleName)
 
-	for e in cfg:
-		config.set(rule, e, str(cfg[e]))
+	for key in kwargs:
+		config.set(ruleName, key, str(kwargs[key]))
 
 	with open(f, "w") as fh:
 		config.write(fh)

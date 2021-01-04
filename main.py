@@ -29,9 +29,15 @@ class Main:
 		self._stopRequest = True
 
 	def reload(self):
-		"""Reloads config and restart all threads."""
+		"""Reloads config and restart all threads.
+		
+		This function will remain active until the services have restarted.
+		"""
 		self._stopRequest = True
 		self._reloadRequest = True
+
+		while not self._running and self._reloadRequest:
+			time.sleep(0.1)
 
 	def run(self):
 		self._logger.info("#########START#########")
@@ -64,11 +70,11 @@ class Main:
 			self._controllerThreads[cid].start()
 
 		try:
-			self.running = True
+			self._running = True
 			while not self._stopRequest:
 				time.sleep(1)
 			self._logger.info("Stop request received by SIGINT/SIGTERM")
-			self.running = False
+			self._running = False
 
 		except KeyboardInterrupt:
 			self._logger.info("Stop request received by keyboard interrupt")
