@@ -1,8 +1,15 @@
 from sensor import Sensor
-import re, os, time
+import re, os
 
 class TempSensor(Sensor):
+	"""Represents a temperature sensor.
+	"""
 	def _measure(self):
+		"""Reads the Sensor
+
+		Returns:
+			Returns the read temperature.
+		"""
 		value = 100
 		try:
 			f = open(self.channel, "r")
@@ -13,8 +20,9 @@ class TempSensor(Sensor):
 				if m:
 					value = float(m.group(2)) / 1000.0
 			f.close()
-		except (IOError):
+		except IOError as e:
 			print("Error reading path: ", self.channel)
+			print(e)
 		return value
 
 
