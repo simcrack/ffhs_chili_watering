@@ -4,7 +4,7 @@
 <head>
 	<title>Chili Watering System</title>
 	<style>
-		.button {
+		:not([hidden]).button {
 			display: block;
 			width: 8rem;
 			height: 0.5rem;
@@ -29,7 +29,7 @@
 			line-height: 2.5rem;
 		}
 
-		.td {
+		:not([hidden]).td {
 			display: table-cell;
 			margin: 0.2rem;
 			padding: 0.1rem;
@@ -71,9 +71,18 @@
 		}
 
 		.len-short {
-			width: 3rem;
+			width: 4rem;
 		}
 	</style>
+	<script>
+		function addRule() {
+			let elems = document.getElementById("newRule").querySelectorAll("[hidden]")
+			for (elem of elems) {
+				elem.removeAttribute("hidden")
+			}
+			document.getElementById("buttonCreateRule").hidden = true
+		}
+	</script>
 </head>
 
 <body>
@@ -87,6 +96,7 @@
 	<div>
 		<h3>Rules</h3>
 		<!--{{RuleRows}}-->
+
 	</div>
 
 	<div>

@@ -163,67 +163,170 @@ class Frontend:
 					# TODO Implement Rules for TimeSensor
 					raise NotImplementedError
 
-				form(
-					input_(
-						type="text",
-						value=rl.name,
-						name="ruleName",
-						cls="td len-long type-str",
-					),
-					input_(
-						type="time",
-						value=rl.timeFrom,
-						name="timeFrom",
-						cls="td len-mid type-time",
-					),
-					input_(
-						type="time",
-						value=rl.timeTo,
-						name="timeTo",
-						cls="td len-mid type-time",
-					),
-					select(
-						option("<"),
-						option("<="),
-						option("="),
-						option(">="),
-						option(">"),
-						value=rl.comparator.asString(),
-						name="comparator",
-						cls="td len-short type-str",
-					),
-					input_(
-						type="number",
-						value=rl.rValue,
-						name="rightValue",
-						cls="td len-mid type-dec",
-					),
-					input_(
-						type="number",
-						value=rl.pumpSeconds,
-						name="pumpSeconds",
-						min="0",
-						max="3600",
-						cls="td len-mshort type-int",
-					),
-					input_(type="hidden", name="controllerNr", value=controllerNr),
-					input_(value="Save Changes", type="submit", cls="td button"),
-					input_(
-						value="Delete rule",
-						onclick="window.location.href='/deleteRule?controllerNr="
-						+ str(controllerNr)
-						+ "&ruleName="
-						+ rl.name
-						+ "'",
-						type="button",
-						cls="td button",
-					),
-					id="rule_" + str(controllerNr) + "_" + str(rl.name),
-					cls="tr",
-					action="/editRule",
+				self._getRuleRow(
+					"edit",
+					controllerNr,
+					rl.name,
+					rl.timeFrom,
+					rl.timeTo,
+					rl.comparator.asString(),
+					rl.rValue,
+					rl.pumpSeconds,
 				)
 
+			self._getRuleRow(
+				"new", controllerNr, "", "00:00:00", "00:00:00", "<", "0", "0"
+			)
 		return tbl
+
+	def _getRuleRow(
+		self,
+		rowType: str,
+		controllerNr,
+		name,
+		timeFrom,
+		timeTo,
+		comparatorString,
+		rValue,
+		pumpSeconds,
+	):
+		hiddenArg = {}
+		readonlyArg = {}
+		formId = ""
+
+		if rowType == "new":
+			hiddenArg["hidden"] = ""
+			formId = "newRule"
+		else:
+			readonlyArg["readonly"] = ""
+			formId = "rule_" + str(controllerNr) + "_" + str(name)
+		frm = form(id=formId, cls="tr", action="/editRule",)
+
+		frm.appendChild(
+			input_(
+				type="text",
+				value=name,
+				name="ruleName",
+				cls="td len-long type-str",
+				**readonlyArg,
+				**hiddenArg,
+			)
+		)
+
+		frm.appendChild(
+			input_(
+				type="time",
+				value=timeFrom,
+				name="timeFrom",
+				cls="td len-mid type-time",
+				**hiddenArg,
+			)
+		)
+
+		frm.appendChild(
+			input_(
+				type="time",
+				value=timeTo,
+				name="timeTo",
+				cls="td len-mid type-time",
+				**hiddenArg,
+			)
+		)
+
+		frm.appendChild(
+			select(
+				option(
+					"<",
+					**(lambda c: dict(selected="") if c == "<" else dict())(
+						comparatorString
+					),
+				),
+				option(
+					"<=",
+					**(lambda c: dict(selected="") if c == "<=" else dict())(
+						comparatorString
+					),
+				),
+				option(
+					"=",
+					**(lambda c: dict(selected="") if c == "=" else dict())(
+						comparatorString
+					),
+				),
+				option(
+					">=",
+					**(lambda c: dict(selected="") if c == ">=" else dict())(
+						comparatorString
+					),
+				),
+				option(
+					">",
+					**(lambda c: dict(selected="") if c == ">" else dict())(
+						comparatorString
+					),
+				),
+				value=comparatorString,
+				name="comparator",
+				cls="td len-short type-str",
+				**hiddenArg,
+			)
+		)
+
+		frm.appendChild(
+			input_(
+				type="number",
+				value=rValue,
+				name="rightValue",
+				cls="td len-mid type-dec",
+				**hiddenArg,
+			)
+		)
+
+		frm.appendChild(
+			input_(
+				type="number",
+				value=pumpSeconds,
+				name="pumpSeconds",
+				min="0",
+				max="3600",
+				cls="td len-mshort type-int",
+				**hiddenArg,
+			)
+		)
+
+		frm.appendChild(
+			input_(type="hidden", name="controllerNr", value=controllerNr, **hiddenArg)
+		)
+
+		frm.appendChild(
+			input_(value="Save Changes", type="submit", cls="td button", **hiddenArg)
+		)
+
+		if rowType == "new":
+			frm.appendChild(
+				input_(
+					id="buttonCreateRule",
+					value="Create rule",
+					onclick="addRule()",
+					type="button",
+					cls="td button",
+				)
+			)
+		else:
+			frm.appendChild(
+				input_(
+					value="Delete rule",
+					onclick="window.location.href='/deleteRule?controllerNr="
+					+ str(controllerNr)
+					+ "&ruleName="
+					+ name
+					+ "'",
+					type="button",
+					cls="td button",
+				)
+			)
+
+		return frm
 
 	def getLog(self):
 		"""Returns a HTML list representation of the latest log entries."""
