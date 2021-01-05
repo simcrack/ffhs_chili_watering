@@ -14,4 +14,4 @@ class LightSensor(Sensor):
 		adc = MCP3008()
 		normalized_max_value = 100
 		value = adc.read(int(self.channel))
-		return value / 1023.0 * normalized_max_value
+		return round((value / 1023.0 * normalized_max_value), 2)

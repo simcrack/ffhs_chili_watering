@@ -15,4 +15,5 @@ class HumSensor(Sensor):
 		normalized_max_value = 100
 		offset_value = 400
 		value = adc.read(int(self.channel))
-		return normalized_max_value - ((value - offset_value) / (1023.0 - offset_value) * normalized_max_value)
+		value = normalized_max_value - ((value - offset_value) / (1023.0 - offset_value) * normalized_max_value)
+		return round(value, 2)
