@@ -25,7 +25,7 @@ def loadControllers(
 	controllers = {}
 	for entry in os.scandir(os.path.join(basePath, "controllers")):
 		if entry.path.endswith(".conf") and entry.is_file():
-			config = configparser.ConfigParser()
+			config = configparser.ConfigParser(defaults={"SensorNr": 0})
 			config.read(entry)
 
 			if not config.has_option("DEFAULT", "Nr"):
@@ -36,28 +36,43 @@ def loadControllers(
 				controller.enums.Type.fromNumber(config.getint("DEFAULT", "Type")),
 				pumper,
 				config.getint("DEFAULT", "PumpNr"),
-				sensors[config.getint("DEFAULT", "SensorNr")],
+				# If there is no Sensor specified (TimeController), None is used.
+				sensors.get(config.getint("DEFAULT", "SensorNr"), None),
 			)
+
+			if controller.enums.Type.TIME == controller.enums.Type.fromNumber(
+				config.getint("DEFAULT", "Type")
+			):
+				getRule = _getTimeRule
+			else:
+				getRule = _getMeasureRule
 
 			# Load all rules (same config file, other sections).
 			for section in config.sections():
 				controllers[config.getint("DEFAULT", "Nr")].addRule(
-					controller.MeasureRule(
-						section,
-						datetime.datetime.strptime(
-							config.get(section, "TimeFrom"), "%H:%M:%S"
-						).time(),
-						datetime.datetime.strptime(
-							config.get(section, "TimeTo"), "%H:%M:%S"
-						).time(),
-						controller.enums.Comparator.fromString(
-							config.get(section, "Comparator")
-						),
-						config.get(section, "RightValue"),
-						config.getint(section, "PumpSeconds"),
-					)
+					getRule(section, section, config)
 				)
 	return controllers
+
+
+def _getMeasureRule(ruleName: str, section: str, config: configparser.ConfigParser):
+	return controller.MeasureRule(
+		ruleName,
+		datetime.datetime.strptime(config.get(section, "TimeFrom"), "%H:%M:%S").time(),
+		datetime.datetime.strptime(config.get(section, "TimeTo"), "%H:%M:%S").time(),
+		controller.enums.Comparator.fromString(config.get(section, "Comparator")),
+		config.get(section, "RightValue"),
+		config.getint(section, "PumpSeconds"),
+	)
+
+
+def _getTimeRule(ruleName: str, section: str, config: configparser.ConfigParser):
+	return controller.TimeRule(
+		ruleName,
+		datetime.datetime.strptime(config.get(section, "TimeFrom"), "%H:%M:%S").time(),
+		datetime.datetime.strptime(config.get(section, "TimeTo"), "%H:%M:%S").time(),
+		config.getint(section, "PumpSeconds"),
+	)
 
 
 def _getControllerFile(basePath: str, controllerNr: int) -> str:

@@ -102,6 +102,7 @@ class Frontend:
 					th("Nr"),
 					th("PumpNr"),
 					th("PumpState"),
+					th("ControllerType"),
 					th("SensorNr"),
 					th("SensorType"),
 					th("SensorValue"),
@@ -116,9 +117,10 @@ class Frontend:
 					td(ctrl),
 					td(c.pumpNr),
 					td(self._main.pumper.getPumpState(c.pumpNr)),
+					td(c.__class__.__name__),
 					td(c.sensor.nr),
 					td(c.sensor.__class__.__name__),
-					td(c.sensor.getValue()),
+					td(str(c.sensor.getValue() or "")),
 					td(
 						input_(
 							value="Show rules",
@@ -139,6 +141,7 @@ class Frontend:
 		Args:
 			controllerNr: Number of the controller.
 		"""
+
 		tbl = div(id="rules", cls="table")
 		tbl.add(
 			thead(
@@ -157,25 +160,37 @@ class Frontend:
 		)
 		with tbl.add(tbody()):
 			for rl in self._main.controllers[controllerNr].ruleSet:
-				if rl.__class__.__name__ == "MeasureRule":
-					pass
+				measureRule = rl.__class__.__name__ == "MeasureRule"
+				if measureRule:
+					self._getRuleRow(
+						"edit",
+						controllerNr,
+						rl.name,
+						rl.timeFrom,
+						rl.timeTo,
+						rl.pumpSeconds,
+						rl.comparator,
+						rl.rValue,
+					)
 				else:
-					# TODO Implement Rules for TimeSensor
-					raise NotImplementedError
-
-				self._getRuleRow(
-					"edit",
-					controllerNr,
-					rl.name,
-					rl.timeFrom,
-					rl.timeTo,
-					rl.comparator.asString(),
-					rl.rValue,
-					rl.pumpSeconds,
-				)
+					self._getRuleRow(
+						"edit",
+						controllerNr,
+						rl.name,
+						rl.timeFrom,
+						rl.timeTo,
+						rl.pumpSeconds,
+					)
 
 			self._getRuleRow(
-				"new", controllerNr, "", "00:00:00", "00:00:00", "<", "0", "0"
+				"new",
+				controllerNr,
+				"",
+				"00:00:00",
+				"00:00:00",
+				"0",
+				(lambda a: "<" if a else None)(measureRule),
+				(lambda a: "0" if a else None)(measureRule),
 			)
 		return tbl
 
@@ -186,14 +201,13 @@ class Frontend:
 		name,
 		timeFrom,
 		timeTo,
-		comparatorString,
-		rValue,
 		pumpSeconds,
+		comparator=None,
+		rValue=None,
 	):
 		hiddenArg = {}
 		readonlyArg = {}
 		formId = ""
-
 		if rowType == "new":
 			hiddenArg["hidden"] = ""
 			formId = "newRule"
@@ -233,54 +247,64 @@ class Frontend:
 			)
 		)
 
-		frm.appendChild(
-			select(
-				option(
-					"<",
-					**(lambda c: dict(selected="") if c == "<" else dict())(
-						comparatorString
-					),
-				),
-				option(
-					"<=",
-					**(lambda c: dict(selected="") if c == "<=" else dict())(
-						comparatorString
-					),
-				),
-				option(
-					"=",
-					**(lambda c: dict(selected="") if c == "=" else dict())(
-						comparatorString
-					),
-				),
-				option(
-					">=",
-					**(lambda c: dict(selected="") if c == ">=" else dict())(
-						comparatorString
-					),
-				),
-				option(
-					">",
-					**(lambda c: dict(selected="") if c == ">" else dict())(
-						comparatorString
-					),
-				),
-				value=comparatorString,
-				name="comparator",
-				cls="td len-short type-str",
-				**hiddenArg,
+		if comparator == None:
+			# TimeRule or other non measuring.
+			frm.appendChild(
+				div("n/a", cls="td len-short type-str", name="comparator", **hiddenArg)
 			)
-		)
+			frm.appendChild(
+				div("n/a", cls="td len-mid type-int", name="rightValue", **hiddenArg)
+			)
+		else:
+			# MeasureRule
+			frm.appendChild(
+				select(
+					option(
+						"<",
+						**(lambda c: dict(selected="") if c == "<" else dict())(
+							comparator
+						),
+					),
+					option(
+						"<=",
+						**(lambda c: dict(selected="") if c == "<=" else dict())(
+							comparator
+						),
+					),
+					option(
+						"=",
+						**(lambda c: dict(selected="") if c == "=" else dict())(
+							comparator
+						),
+					),
+					option(
+						">=",
+						**(lambda c: dict(selected="") if c == ">=" else dict())(
+							comparator
+						),
+					),
+					option(
+						">",
+						**(lambda c: dict(selected="") if c == ">" else dict())(
+							comparator
+						),
+					),
+					value=comparator,
+					name="comparator",
+					cls="td len-short type-str",
+					**hiddenArg,
+				)
+			)
 
-		frm.appendChild(
-			input_(
-				type="number",
-				value=rValue,
-				name="rightValue",
-				cls="td len-mid type-dec",
-				**hiddenArg,
+			frm.appendChild(
+				input_(
+					type="number",
+					value=rValue,
+					name="rightValue",
+					cls="td len-mid type-dec",
+					**hiddenArg,
+				)
 			)
-		)
 
 		frm.appendChild(
 			input_(

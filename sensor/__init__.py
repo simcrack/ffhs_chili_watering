@@ -3,6 +3,7 @@ from sensor.enums import Type
 from sensor.TempSensor import TempSensor
 from sensor.HumSensor import HumSensor
 from sensor.LightSensor import LightSensor
+from sensor.EmptySensor import EmptySensor
 from sensor.TestTempSensor import TestTempSensor
 from sensor.TestHumSensor import TestHumSensor
 from sensor.TestLightSensor import TestLightSensor

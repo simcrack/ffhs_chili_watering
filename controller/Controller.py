@@ -58,6 +58,11 @@ class Controller:
 					logger.info("Controller is going down")
 					break
 				self._doWork()
+	
+	def addRule(self, rule: controller.ruling.Rule):
+		"""Thread safe, adds an additional Rule to the Controller."""
+		with self.lock:
+			self.ruleSet.append(rule)
 
 	def _doWork(self):
 		"""NOT THREAD SAFE, should be called from run() to do the work.
@@ -103,15 +108,10 @@ class MeasureController(Controller):
 		"""
 		Controller.__init__(self, pumper, pumpNr, sensor)
 
-	def addRule(self, rule: controller.ruling.MeasureRule):
-		"""Thread safe, adds an additional Rule to the Controller."""
-		with self.lock:
-			self.ruleSet.append(rule)
-
 	def _doWork(self):
 		"""NOT THREAD SAFE, should be called from run() to do the work.
 
-		For details, see base Class Controller.
+		For details, see base class Controller.
 		"""
 		for rule in self.ruleSet:
 			seconds = rule.getPumpSeconds(
