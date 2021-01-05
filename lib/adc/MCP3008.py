@@ -36,7 +36,6 @@ class MCP3008:
         Returns:
             Returns the read channel int-value between 0 and 1023.
         """
-        with self.lock:
-            adc = self._spi.xfer2([1, (8 + channel) << 4, 0])
-            data = ((adc[1] & 3) << 8) + adc[2]
-            return data
+        adc = self._spi.xfer2([1, (8 + channel) << 4, 0])
+        data = ((adc[1] & 3) << 8) + adc[2]
+        return data
