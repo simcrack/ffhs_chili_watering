@@ -10,7 +10,7 @@ class TempSensor(Sensor):
 		Returns:
 			Returns the read temperature.
 		"""
-		value = 100
+		value = 100.0
 		try:
 			f = open(self.channel, "r")
 			line = f.readline()
@@ -23,7 +23,8 @@ class TempSensor(Sensor):
 		except IOError as e:
 			print("Error reading path: ", self.channel)
 			print(e)
-		return value
+		finally:
+			return value
 
 
 
