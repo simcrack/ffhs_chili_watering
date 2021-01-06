@@ -10,7 +10,21 @@ import persistanceLayer
 
 
 class Frontend:
+	"""Provides functions ans services related to the frontend.
+	
+	The functions can access HTML files in the web root and will replace some
+	place holder with date (i.E. <!--{{RuleRows}}-->)
+	"""
+
 	def __init__(self, main):
+		"""Instantiate a Frontend object.
+
+		The server settings are loaded from the server.conf in the main conf directory.
+		See also settings.py.
+
+		Args:
+			main : reference to the Main object (for accessing other threads objects).
+		"""
 		conf = persistanceLayer.getWebServerConf(settings.BASECONFDIR)
 		self._main = main
 		self._baseWebDir = conf["baseWebDir"]
@@ -31,12 +45,29 @@ class Frontend:
 		}
 
 	def _validatePassword(self, realm, username, password):
+		"""Validates a username/password configuration.
+		Args:
+			realm : See specificaton for HTTP basic authentication.
+			username : See specificaton for HTTP basic authentication.
+			password : See specificaton for HTTP basic authentication.
+
+		Returns:
+			True, if entered username/password matches else False.
+		"""
 		return (
 			username in self._userPassword and self._userPassword[username] == password
 		)
 
 	@cherrypy.expose
 	def index(self, controllerNr: str = "0"):
+		"""Is called if a user opens the main web page.
+
+		Args:
+			controllerNr : Optional, if provided, the given controller is displayed.
+
+		Returns:
+			A string containing the HTML page source code.
+		"""
 		html = ""
 		with open(os.path.join(self._baseWebDir, "index.html")) as f:
 			html = f.read()
@@ -69,14 +100,20 @@ class Frontend:
 
 	@cherrypy.expose
 	def editRule(self, controllerNr: str, ruleName: str, **kwargs):
+		"""Updates a rule in the config file and reload the backend.
+
+		The function can also be used to create a new rule. For that, a rule name
+		must be chosen which is not in use yet.
+
+		Args:
+			controllerNr : number of the controller AS STRING, whichs Rule shall be modified.
+			ruleName : Name of the rule which shall be modified.
+			**kwargs : Key-value pairs which shall be written into the ini file.
+
+		Return:
+			Nothing, redirects to index() with cherrypy.HTTPRedirect.
 		"""
 
-		timeFrom: str = "",
-		timeTo: str = "",
-		comparator: str = "",
-		rightValue: float = 0,
-		pumpSeconds: int = 0,
-		"""
 		if controllerNr == "0":
 			return self.index()
 
@@ -88,13 +125,16 @@ class Frontend:
 		raise cherrypy.HTTPRedirect("index")
 
 	def run(self):
+		"""Runs the cherrypy HTTP server."""
 		cherrypy.quickstart(self, "/", self._webConfig)
 
 	def stop(self):
+		"""Stops the cherrypy HTTP server."""
 		cherrypy.engine.exit()
 
 	def getControllers(self):
 		"""Gets a HTML table representation of all loaded controllers."""
+
 		tbl = table(id="controllers")
 		tbl.add(
 			thead(
@@ -208,6 +248,7 @@ class Frontend:
 		comparator=None,
 		rValue=None,
 	):
+		"""Gets a HTML table row representation of a rule with the given arguments."""
 		hiddenArg = {}
 		readonlyArg = {}
 		formId = ""
@@ -360,5 +401,5 @@ class Frontend:
 		ls = ol(id="log")
 		with open(settings.LOGFILE, "r") as f:
 			for f in reversed(f.readlines()[-50:]):
-				ls.add(li(f))
+				ls.add(li(f, cls="logentry"))
 		return ls

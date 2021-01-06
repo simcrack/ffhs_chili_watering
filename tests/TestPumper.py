@@ -1,13 +1,14 @@
 """Provides tests for the pumper package."""
 import unittest
-from pumper.Pumper import Pumper
+import settings
+import pumper
 
 
 class TestPumper(unittest.TestCase):
 	"""Provides tests for the Pumper class."""
 
 	def setUp(self):
-		self.p = Pumper()
+		self.p = pumper.Pumper()
 
 	def testPumpListAfterInsert(self):
 		"""Tests if the pump list remains valid after insert."""
