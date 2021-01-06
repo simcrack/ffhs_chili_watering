@@ -20,7 +20,7 @@ The following python packages ar needed:
 
 === Installation Instructions
 
-==== Prepare Raspberry
+==== Prepare Raspberry PI
 Create a sd card with the RASPBERRY PI OS (32-BIT). You can use PI Imager v1.4 (see https://www.raspberrypi.org/software/)
 Add an empty .ssh file in the root folder, this enabled ssh at the first start up.
 Create a wpa_supplicant.conf file with your Wi-Fi settings.
@@ -69,7 +69,6 @@ sudo update-alternatives --config python
 python -V
 ----
 
-.py-spidev
 .hardware interfaces
 [source,bash]
 ----
@@ -85,8 +84,8 @@ wget https://github.com/doceme/py-spidev/archive/master.zip
 unzip master.zip
 cd py-spidev-master
 
-# you have to install python3-dev for this (apt install python3-dev)
-sudo apt install python3-devel
+# you have to install python-dev for this (apt install python-dev)
+sudo apt install python-dev
 sudo python setup.py install
 ----
 
@@ -110,7 +109,7 @@ sudo raspi-config
 --> ok, is enable
 ----
 
-Activate the SPI-Bus
+===== Activate the SPI-Bus
 
 .SPI activation
 [source,bash]
@@ -122,7 +121,7 @@ sudo raspi-config
 --> ok, is enable
 ----
 
-1-Wire activation
+===== 1-Wire activation
 
 .1-Wire activation
 [source,bash]
