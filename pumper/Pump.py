@@ -22,17 +22,17 @@ class Pump:
 		self._pumping = False
 		GPIO.setmode(GPIO.BCM)
 		# Set pin gpio to be an output pin and set initial value to low(off)
-		GPIO.setup(self._gpio, GPIO.OUT, initial=GPIO.LOW)
+		GPIO.setup(self._gpio, GPIO.OUT, initial=GPIO.HIGH)
 
 	def start(self):
 		'''Activates the pump (start pumping).'''
-		GPIO.output(self._gpio, GPIO.HIGH)
+		GPIO.output(self._gpio, GPIO.LOW)
 		self._pumping = True
 		logger.info("Pump received start request, pumpNr: %d", self._pumpNr)
 	
 	def stop(self):
 		'''Deactivates the pump (stop pumping).'''
-		GPIO.output(self._gpio, GPIO.LOW)
+		GPIO.output(self._gpio, GPIO.HIGH)
 		self._pumping = False
 		logger.info("Pump received stop request, pumpNr: %d", self._pumpNr)
 	
