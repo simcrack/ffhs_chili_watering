@@ -6,13 +6,16 @@ This project ist related to the course ES&HH of the FFHS.
 
 
 === Requirements
+
+This projects is tested only with **Python 3.9.**
+
 The following python packages ar needed:
 
 * Python3.9.1
 * py-spidev (see https://tutorials-raspberrypi.de/raspberry-pi-mcp3008-analoge-signale-auslesen/)
-* cherrypy (web server)
+* cherrypy (Web Server)
 * dominate (HTML Builder)
-* standard python library packages (configparser, datetime, enum, logging, os, signal, sys, threading, time, types, unittest)
+* standard Python library packages (configparser, datetime, enum, logging, os, signal, sys, threading, time, types, unittest)
 * RPi.GPIO (or fake-rpigpio for testing purposes)
 
 === Installation Instructions
@@ -67,27 +70,31 @@ python -V
 ----
 
 .py-spidev
+.hardware interfaces
 [source,bash]
 ----
-wget https://github.com/doceme/py-spidev/archive/master.zip 
+# RPi.GPIO for production
+sudo apt install RPi.GPIO
+pip install RPi.GPIO
+
+# RPi.GPIO for testing
+# pip install fake-rpigpio
+
+# py-spidev
+wget https://github.com/doceme/py-spidev/archive/master.zip
 unzip master.zip
 cd py-spidev-master
 
 # you have to install python3-dev for this (apt install python3-dev)
+sudo apt install python3-devel
 sudo python setup.py install
 ----
 
-.cherrypi
+.web frontend
 [source,bash]
 ----
 pip install cherrypy
 pip install dominate
-
-# for production
-pip install RPi.GPIO
-
-# for testing
-# pip install fake-rpigpio
 ----
 
 ==== Activate Modules

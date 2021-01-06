@@ -2,7 +2,10 @@
 This ist the Controller Package.
 
 Its main content is an abstract class Controller and descendants which implement this class.
-A Controller links a Sensor with a pump. It describes under which Sensor conditions the pump have to be activated.
+A Controller links a Sensor with a pump.
+It describes under which Sensor conditions the pump have to be activated.
+For that, a controller can contain multiple Rule objects (ruling.py) which describe the wanted
+behavior of the controller.
 """
 from controller.Controller import Controller
 from controller.enums import Type

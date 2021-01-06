@@ -1,17 +1,19 @@
-== Controller
-This ist the Controller Module.
+== controller package
+This ist the controller package.
 
 Its main content is an abstract class `Controller` and descendants which implement this class.
 A Controller links a Sensor with a pump. It describes under which Sensor conditions the pump have to be activated.
+
+Also, this package contains rules, which describes, how the Controller shall behave.
 
 === Usage
 
 .create controller
 [source,python]
 ----
-import Controller
+import controller
 
-c = Controller.createController(Controller.Type.LIGHT, pumper=myPumper, pumpNr=1, sensor=myTempSensor)
+c = controller.Controller.createController(Controller.Type.LIGHT, pumper=myPumper, pumpNr=1, sensor=myTempSensor)
 ----
 
 .start controller
@@ -28,6 +30,6 @@ x.start()
 # send a stop request to the controller
 c.stop()
 
-# stop the sensor controller
+# stop the controller thread
 x.join()
 ----

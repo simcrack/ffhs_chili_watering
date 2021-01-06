@@ -1,3 +1,4 @@
+"""This is the main script of the chili watering system."""
 import signal
 import threading
 import sys
@@ -16,21 +17,27 @@ import web.frontend
 
 
 class Main:
+	"""Controller class for main thread."""
+
 	def __init__(self):
+		"""Initialises the main thread."""
 		self._stopRequest = False
 		self._reloadRequest = True
+		self._logger = logging.getLogger(__name__)
 		signal.signal(signal.SIGINT, self._shutdown)
 		signal.signal(signal.SIGTERM, self._shutdown)
 
-		self._logger = logging.getLogger(__name__)
-
 	def _shutdown(self, signum, frame):
+		"""Send a stop command to the main thrad.
+
+		Args are provided from the system (signal parameters).
+		"""
 		self._logger.info("Signal received, signum: %d", signum)
 		self._stopRequest = True
 
 	def reload(self):
 		"""Reloads config and restart all threads.
-		
+
 		This function will remain active until the services have restarted.
 		"""
 		self._stopRequest = True
@@ -40,6 +47,7 @@ class Main:
 			time.sleep(0.1)
 
 	def run(self):
+		"""Starts the main loop and its child threads."""
 		self._logger.info("#########START#########")
 
 		# Pumper: Load config and start the thread
@@ -69,6 +77,7 @@ class Main:
 			)
 			self._controllerThreads[cid].start()
 
+		# Main loop.
 		try:
 			self._running = True
 			while not self._stopRequest:
@@ -83,6 +92,7 @@ class Main:
 			self.stop()
 
 	def stop(self):
+		"""Sends a stop command to all child threads and joins them back to the main thread."""
 		for cid in self.controllers:
 			self.controllers[cid].stop()
 		for sid in self.sensors:
@@ -106,6 +116,8 @@ if __name__ == "__main__":
 	webThread = threading.Thread(target=web.run, args=(), name="web_frontend")
 	webThread.start()
 
+	# The backend can be reloaded by the web frontend
+	# this loop keeps running also if the main thread and its child threads are restarted.
 	while main._reloadRequest:
 		main._reloadRequest = False
 		main._stopRequest = False

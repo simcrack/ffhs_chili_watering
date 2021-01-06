@@ -4,7 +4,10 @@ import sensor
 
 
 class TimeController(controller.Controller):
-	"""Specialised Controller for time based sensors without measuring."""
+	"""Specialised Controller for time based sensors without measuring.
+	
+	For details, see base class.
+	"""
 
 	def __init__(self, pumper, pumpNr):
 		"""Initalises a TimeController."""

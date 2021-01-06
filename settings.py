@@ -1,7 +1,9 @@
-"""This module contains all global Settings related to the chili watering system.
+"""This module contains all global settings related to the chili watering system.
 
 It is used for the following purposes:
-- Defining the configratuon directory.
+- Defining the configration directory.
+- Defining test settings.
+- Initalising the logger object.
 """
 
 import os

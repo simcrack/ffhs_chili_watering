@@ -1,5 +1,4 @@
-"""Provides tests for the pumper package."""
-import unittest
+"""Provides tests for the pumper and sensor packages."""
 from time import sleep
 
 import pumper
@@ -8,8 +7,8 @@ from pumper.Pumper import Pumper
 from sensor import Type
 
 
-class TestPumper(unittest.TestCase):
-	"""Provides tests for the Pumper class."""
+class TestHardware(unittest.TestCase):
+	"""Provides tests for the Hardware related classes."""
 
 	def setUp(self):
 		self.p = Pumper()
@@ -24,13 +23,25 @@ class TestPumper(unittest.TestCase):
 
 	def testTempSensor(self):
 		"""Test reading of the temperature sensor."""
-		temp = sensor.createSensor(8, Type.TEMPERATURE, "/sys/bus/w1/devices/28-3c01b556cc3d/w1_slave")
-		print("Temperature sensor channel: " + temp.channel + ", read value is" + temp.getValue())
+		temp = sensor.createSensor(
+			8, Type.TEMPERATURE, "/sys/bus/w1/devices/28-3c01b556cc3d/w1_slave"
+		)
+		print(
+			"Temperature sensor channel: "
+			+ temp.channel
+			+ ", read value is"
+			+ temp.getValue()
+		)
 
 	def testLightSensor(self):
 		"""Test reading of the light sensor."""
 		light = sensor.createSensor(7, Type.LIGHT, str(7))
-		print("Light sensor channel: " + light.channel + ", read value is" + light.getValue())
+		print(
+			"Light sensor channel: "
+			+ light.channel
+			+ ", read value is"
+			+ light.getValue()
+		)
 
 	def testPump(self):
 		"""Test the pump function of each pump"""

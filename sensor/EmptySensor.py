@@ -1,9 +1,11 @@
 from sensor import Sensor
-from lib.adc import MCP3008
 
 
 class EmptySensor(Sensor):
-	"""Dummy sensor class, used by TimeController."""
+	"""Dummy sensor class, used by TimeController.
+
+	For details, see base class.
+	"""
 
 	def __init__(self):
 		"""Iitialises the EmptySensor with dummy values."""

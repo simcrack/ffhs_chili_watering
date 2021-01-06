@@ -1,0 +1,39 @@
+== pumper package
+This ist the pumper package.
+
+Its main content is the class `Pumper`.
+A Pumper holds references to one or multiple Pump objects with which it can manage them.
+
+=== Usage
+
+.create pumper
+[source,python]
+----
+import controller
+
+p = pumper.Pumper()
+
+# add a pump (pumpNr: 1, gpio: 2)
+p.addPump(1, 2)
+
+# send pump order (pumpNr: 1, seconds: 10)
+p.pump(1, 18)
+----
+
+.start pumper
+[source,python]
+----
+# the controller must be started in a separate thread, otherwise the main thread will jam
+x = threading.Thread(target=p.run, args=())
+x.start()
+----
+
+.stop pumper
+[source,python]
+----
+# send a stop request to the controller
+p.stop()
+
+# stop the controller thread
+x.join()
+----
