@@ -1,3 +1,10 @@
+"""
+This ist the Sensor Package.
+
+Its main content is an abstract class Sensor and descendants which implement this class.
+A Sensor is the representation of one physical sensor.
+"""
+
 from sensor.Sensor import Sensor
 from sensor.enums import Type
 from sensor.TempSensor import TempSensor
@@ -8,7 +15,7 @@ from sensor.TestTempSensor import TestTempSensor
 from sensor.TestHumSensor import TestHumSensor
 from sensor.TestLightSensor import TestLightSensor
 
-# factory function for sensors
+
 def createSensor(nr: int, sensorType: Type, channel: str = "0"):
 	"""Factory function for Sensor objects.
 

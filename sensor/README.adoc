@@ -1,17 +1,18 @@
 == Sensor
-This ist the Sensor Package.
+This ist the sensor Package.
 
 Its main content is an abstract class `Sensor` and descendants which implement this class.
-A Sensor is alway bound to one physical measuring device. It runs in a separate thread and measures the current value of its device regularly.
+A Sensor is always bound to one physical measuring device. It runs in a separate thread and measures the current value of its device regularly.
 
 === Usage
 
 .create sensor
 [source,python]
 ----
-import Sensor
+import sensor
 
-s = Sensor.createSensor(Sensor.Type.TEMPERATURE, channel=2)
+# the channel can be a pin or a path to a device
+s = sensor.createSensor(Sensor.Type.TEMPERATURE, channel="2")
 ----
 
 .start sensor

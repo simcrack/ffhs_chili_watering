@@ -32,6 +32,11 @@ class Type(enum.Enum):
 
 
 class Comparator(enum.Enum):
+	"""Represents a mathematical expression for comparing two values.
+
+	This Enum is used by MeasureRule/MeasureController.
+	"""
+
 	LESSER = 1
 	LESSEROREQUAL = 2
 	EQUAL = 3

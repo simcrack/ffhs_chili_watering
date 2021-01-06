@@ -1,5 +1,4 @@
-"""This module provides functions for reading and writing configuration files.
-"""
+"""This module provides functions for reading and writing configuration files."""
 import os
 import configparser
 import datetime
@@ -56,6 +55,16 @@ def loadControllers(
 
 
 def _getMeasureRule(ruleName: str, section: str, config: configparser.ConfigParser):
+	"""Instantiates a MeasureRule with the parameters defined in config.
+
+	Args:
+		ruleName : Name of the rule.
+		section : section in the config which describes the rule (usually same as ruleName)
+		config : The config, loaded from a conf file.
+
+	Returns:
+		MeasureRule instance.
+	"""
 	return controller.MeasureRule(
 		ruleName,
 		datetime.datetime.strptime(config.get(section, "TimeFrom"), "%H:%M:%S").time(),
@@ -67,6 +76,16 @@ def _getMeasureRule(ruleName: str, section: str, config: configparser.ConfigPars
 
 
 def _getTimeRule(ruleName: str, section: str, config: configparser.ConfigParser):
+	"""Instantiates a TimeRule with the parameters defined in config.
+
+	Args:
+		ruleName : Name of the rule.
+		section : section in the config which describes the rule (usually same as ruleName)
+		config : The config, loaded from a conf file.
+
+	Returns:
+		TimeRule instance.
+	"""
 	return controller.TimeRule(
 		ruleName,
 		datetime.datetime.strptime(config.get(section, "TimeFrom"), "%H:%M:%S").time(),

@@ -14,24 +14,26 @@ class Rule:
 	):
 		"""Initialises a rule.
 
-		A Rule is only evaluatet, if the current time corresponds to a range<>definded in the rule  (timeFrom, timeTo).
+		A Rule is only evaluated if the current time corresponds to a range
+		definded in the rule  (timeFrom, timeTo).
 		Also, the Rule is applied only once a day. To ensure that, it holds
 		the timestamp of the last run in an instance variable (lastRun).
 
 		Attributes:
+			name : The name of the Rule (is the identifier of the Rule).
 			lastRun : Last time, the Rule was checked.
 			timeFrom : Lowerbound of the Rule validity timespan.
 			timeTo : Upperbound of the Rule validity timespan.
 			pumpSeconds : Number of seconds for which the pump shall run if the Rule is applied.
 		"""
+		self.name = name
 		self.lastRun: datetime = None
 		self.timeFrom = timeFrom
 		self.timeTo = timeTo
 		self.pumpSeconds = pumpSenconds
-		self.name = name
 
 	def getPumpSeconds(self, currentDatetime) -> int:
-		"""ABSTRACT FUNCTION. Returns the number of Second, the pump shall run.
+		"""ABSTRACT FUNCTION. Returns the number of seconds, the pump shall run.
 
 		Checks if the rule shall be applied (only once a day) and if its
 		conditions are met.
@@ -39,7 +41,6 @@ class Rule:
 
 		Args:
 			currentDatetime : Present date and time.
-			currentValue : Value returned by the sensor.
 
 		Returns:
 			Number of seconds if the pump shall run. If not, 0 is returned.
@@ -63,6 +64,8 @@ class Rule:
 
 
 class MeasureRule(Rule):
+	"""Concrete class for rules which are used with measuring devices (sensors)."""
+
 	def __init__(
 		self,
 		name: str,
@@ -103,7 +106,7 @@ class MeasureRule(Rule):
 			raise NotImplementedError
 
 	def getPumpSeconds(self, currentDateTime: datetime.datetime, currentValue) -> int:
-		"""Returns the number of Second, the pump shall run.
+		"""Returns the number of seconds, the pump shall run.
 
 		For details, see base class.
 		In MeasureRule, the current sensor value is compared with a given value.
@@ -119,11 +122,14 @@ class MeasureRule(Rule):
 
 
 class TimeRule(Rule):
+	"""Concrete class for rules which are only time related (no measuring device)."""
+
 	def getPumpSeconds(self, currentDateTime: datetime.datetime) -> int:
-		"""Returns the number of Second, the pump shall run.
+		"""Returns the number of seconds, the pump shall run.
 
 		For details, see base class.
-		In TimeRule, there is no check if the given time intervall it becomes true.
+		In TimeRule, there is no check.
+		If the given time intervall becomes active this function returns true.
 		"""
 		if self._shouldCheck(currentDateTime):
 			return self.pumpSeconds

@@ -25,17 +25,19 @@ class _Pump(Pump):
 		Attributes:
 			seconds : Number of seconds as float for which the pump shall run.
 						The pump must be stopped if it reaches 0.
-			For the rest, see base Class "Pump"
+			For the rest, see base class Pump
 		"""
 		Pump.__init__(self, pumpNr, gpio)
 		self.seconds = float(0)
+
+		# runSince is used to calculate the stop time.
 		self._runSince: datetime.datetime = None
 
 	def __del__(self):
 		"""Stops the pump before the object is destroyed.
 
-		This is important because otherwise, the pump could run for a long time
-		even if the software was stopped.
+		This is a safety measurement, because the pump could run for a long time
+		even if the software was stopped, if the stop command was not send.
 		"""
 		self.stop()
 
@@ -93,7 +95,12 @@ class Pumper:
 	"""
 
 	def __init__(self):
-		"""Inits Pumper with an empty list of pumps."""
+		"""Inits Pumper with an empty list of pumps.
+		
+		Attributes:
+			pump : A dict of pumps, which are managed by this pumper (pumNr is the key).
+			lock : A Lock object which must be used for direct state changes of Pumper.
+		"""
 		self.pumps = {}
 		self.lock = threading.Lock()
 		self._stop: bool = None
@@ -129,8 +136,7 @@ class Pumper:
 			self._stop = True
 
 	def addPump(self, pumpNr, gpio):
-		"""Thread safe, instantiates a pump and adds it to the managed pump
-		list.
+		"""Thread safe, instantiates a pump and adds it to the managed pump list.
 
 		Args:
 			pumpNr: Number of the pump (int).
@@ -141,6 +147,7 @@ class Pumper:
 				raise ValueError("pumpNr is already in use by another pump")
 
 			if gpio == 0:
+				# For testing purposes for when there is no hardware available.
 				self.pumps[pumpNr] = _TestPump(pumpNr, gpio)
 			else:
 				self.pumps[pumpNr] = _Pump(pumpNr, gpio)
@@ -175,7 +182,7 @@ class Pumper:
 
 		Returns:
 			A String containing the current pump state, the datetime when the
-			Pump ran lastly and the number of second it hasnt run yet.
+			Pump ran lastly and the remaining number of second it has to run.
 		"""
 		ret = "Pumping" if self.pumps[pumpNr].isPumping() else "Stopped"
 		if self.pumps[pumpNr]._runSince:
