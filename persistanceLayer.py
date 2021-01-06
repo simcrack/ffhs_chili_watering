@@ -61,7 +61,7 @@ def _getMeasureRule(ruleName: str, section: str, config: configparser.ConfigPars
 		datetime.datetime.strptime(config.get(section, "TimeFrom"), "%H:%M:%S").time(),
 		datetime.datetime.strptime(config.get(section, "TimeTo"), "%H:%M:%S").time(),
 		controller.enums.Comparator.fromString(config.get(section, "Comparator")),
-		config.get(section, "RightValue"),
+		config.getfloat(section, "RightValue"),
 		config.getint(section, "PumpSeconds"),
 	)
 

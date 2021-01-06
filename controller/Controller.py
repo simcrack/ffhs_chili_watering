@@ -113,9 +113,11 @@ class MeasureController(Controller):
 
 		For details, see base class Controller.
 		"""
+		currentTimeStamp = datetime.datetime.now()
 		for rule in self.ruleSet:
 			seconds = rule.getPumpSeconds(
-				datetime.datetime.now(), self.sensor.getValue()
+				currentTimeStamp, self.sensor.getValue()
 			)
 			if seconds > 0:
 				self._pumper.pump(self.pumpNr, seconds)
+				rule.lastRun = currentTimeStamp

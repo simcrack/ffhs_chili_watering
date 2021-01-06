@@ -54,8 +54,8 @@ class Rule:
 			and (
 				# If the Rule was never used (no lastTime), it nonetheless has to
 				# be a date for comparison. Thats the reason of the lambda.
-				lambda a: a
-				if datetime.datetime.date(a)
+				lambda a: datetime.datetime.date(a)
+				if a
 				else datetime.date(1970, 1, 1)
 			)(self.lastRun)
 			!= datetime.datetime.date(currentDateTime)
@@ -87,7 +87,9 @@ class MeasureRule(Rule):
 
 	def _compare(self, currentValue):
 		"""Compares the sensor value with the constant rValue."""
-		if self.comparator == controller.enums.Comparator.LESSER:
+		if currentValue == None:
+			return False
+		elif self.comparator == controller.enums.Comparator.LESSER:
 			return currentValue < self.rValue
 		elif self.comparator == controller.enums.Comparator.LESSEROREQUAL:
 			return currentValue <= self.rValue

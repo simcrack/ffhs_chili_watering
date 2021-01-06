@@ -10,9 +10,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class _Pump(Pump):
 	"""Private class for a pump extending the Pump class in Pump.py.
-	
+
 	It adds values and functions which are used for the pump management.
 	This Class is NOT THREAD SAFE, every access to it must be secured with a
 	lock (in Pumper class)"
@@ -20,7 +21,7 @@ class _Pump(Pump):
 
 	def __init__(self, pumpNr: int, gpio: str):
 		"""See base class
-		
+
 		Attributes:
 			seconds : Number of seconds as float for which the pump shall run.
 						The pump must be stopped if it reaches 0.
@@ -32,7 +33,7 @@ class _Pump(Pump):
 
 	def __del__(self):
 		"""Stops the pump before the object is destroyed.
-		
+
 		This is important because otherwise, the pump could run for a long time
 		even if the software was stopped.
 		"""
@@ -52,12 +53,11 @@ class _Pump(Pump):
 			# Pump stopped, but has to be started
 			self._runSince = datetime.datetime.now()
 			self.start()
-		
+
 		elif self._runSince:
 			# Pump started, seconds have to be updated
 			currentDate = datetime.datetime.now()
-			self.seconds -= datetime.datetime.microsecond(
-				currentDate - self._runSince) / 1000
+			self.seconds -= (currentDate - self._runSince).total_seconds()
 			self._runSince = currentDate
 
 	def immediateStop(self):
@@ -69,18 +69,34 @@ class _Pump(Pump):
 		self._runSince: datetime.datetime = None
 		self.stop()
 
+
+class _TestPump(_Pump):
+	"""Private class for a test pump extending the _Pump class.
+
+	It behaves like _Pump, but overrides the stop() and start() function
+	which now simply make a log entry.
+	"""
+
+	def start(self):
+		logger.info("TESTPUMP START: " + str(self._pumpNr))
+
+	def stop(self):
+		logger.info("TESTPUMP  STOP: " + str(self._pumpNr))
+
+
 class Pumper:
 	"""Is repsonsible for the management of all pumps.
-	
+
 	Runs in a separate thread and gets pump orders from other threads.
 	Other threads can also create new pumps and delete exsiting ones
 	with its class methods.
 	"""
+
 	def __init__(self):
 		"""Inits Pumper with an empty list of pumps."""
 		self.pumps = {}
 		self.lock = threading.Lock()
-		self._stop : bool = None
+		self._stop: bool = None
 
 	def run(self):
 		"""Starts the pumper management loop.
@@ -113,9 +129,9 @@ class Pumper:
 			self._stop = True
 
 	def addPump(self, pumpNr, gpio):
-		"""Thread safe, instantiates a pump and adds it to the managed pump 
+		"""Thread safe, instantiates a pump and adds it to the managed pump
 		list.
-		
+
 		Args:
 			pumpNr: Number of the pump (int).
 			gpio: GPIO Pin of the pump.
@@ -124,16 +140,19 @@ class Pumper:
 			if pumpNr in self.pumps:
 				raise ValueError("pumpNr is already in use by another pump")
 
-			self.pumps[pumpNr] = _Pump(pumpNr, gpio)
+			if gpio == 0:
+				self.pumps[pumpNr] = _TestPump(pumpNr, gpio)
+			else:
+				self.pumps[pumpNr] = _Pump(pumpNr, gpio)
 
 	def pump(self, pumpNr: int, seconds: int) -> int:
 		"""Thread safe, receives a pump order for a specific pump.
-		
+
 		The pump is started, on the next checking time (manageStartStop())
 		and will be stopped after the time period defined in "seconds" has elapsed.
 		If the pump is already running, the seconds are added to the predefined
 		ones.
-		
+
 		Args:
 			pumpNr: Number of the pump.
 			seconds: For how many seconds shall the pump be activated?
@@ -160,20 +179,20 @@ class Pumper:
 		"""
 		ret = "Pumping" if self.pumps[pumpNr].isPumping() else "Stopped"
 		if self.pumps[pumpNr]._runSince:
-			ret += " last start: {:%Y-%m-%d %H:%M:%S}".format(self.pumps[pumpNr]._runSince) 
+			ret += " last start: {:%Y-%m-%d %H:%M:%S}".format(
+				self.pumps[pumpNr]._runSince
+			)
 		if self.pumps[pumpNr].seconds > 0:
 			ret += " seconds remaining: {}".format(self.pumps[pumpNr].seconds)
 		return ret
 
-
 	def pumpExists(self, pumpNr: int) -> bool:
 		"""NOT THREAD SAFE, checks, if a given pumpNr already exists.
-		
+
 		Args:
 			pumpNr: Number of the Pump.
-		
+
 		Returns:
 			True if the Pump already exists, else False.
 		"""
 		return pumpNr in self.pumps
-

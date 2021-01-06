@@ -15,7 +15,9 @@ class TimeController(controller.Controller):
 
 		For details, see base class Controller.
 		"""
+		currentTimeStamp = datetime.datetime.now()
 		for rule in self.ruleSet:
-			seconds = rule.getPumpSeconds(datetime.datetime.now())
+			seconds = rule.getPumpSeconds(currentTimeStamp)
 			if seconds > 0:
 				self._pumper.pump(self.pumpNr, seconds)
+				rule.lastRun = currentTimeStamp

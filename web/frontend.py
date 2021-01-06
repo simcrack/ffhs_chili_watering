@@ -159,8 +159,11 @@ class Frontend:
 			)
 		)
 		with tbl.add(tbody()):
+			measureRule = (
+				self._main.controllers[controllerNr].__class__.__name__
+				!= "TimeController"
+			)
 			for rl in self._main.controllers[controllerNr].ruleSet:
-				measureRule = rl.__class__.__name__ == "MeasureRule"
 				if measureRule:
 					self._getRuleRow(
 						"edit",
@@ -169,7 +172,7 @@ class Frontend:
 						rl.timeFrom,
 						rl.timeTo,
 						rl.pumpSeconds,
-						rl.comparator,
+						rl.comparator.asString(),
 						rl.rValue,
 					)
 				else:
