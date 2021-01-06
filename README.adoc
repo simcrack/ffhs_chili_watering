@@ -8,6 +8,7 @@ This project ist related to the course ES&HH of the FFHS.
 === Requirements
 The following python packages ar needed:
 
+* Python3.9.1
 * py-spidev (see https://tutorials-raspberrypi.de/raspberry-pi-mcp3008-analoge-signale-auslesen/)
 * cherrypy (web server)
 * dominate (HTML Builder)
@@ -16,6 +17,23 @@ The following python packages ar needed:
 
 === Installation Instructions
 
+==== Prepare Raspberry
+Create a sd card with the RASPBERRY PI OS (32-BIT). You can use PI Imager v1.4 (see https://www.raspberrypi.org/software/)
+Add an empty .ssh file in the root folder, this enabled ssh at the first start up.
+Create a wpa_supplicant.conf file with your Wi-Fi settings.
+Put this also in the root folder and this will connect the
+Raspberry Pi to your Wi-Fi if the Raspberry has a Wi-FI-Module (https://pi-buch.info/wlan-schon-vor-der-installation-konfigurieren/).
+
+After the first startup you need to do the updates and upgrades.
+
+.updates and upgrades
+[source,bash]
+----
+sudo apt-get update
+sudo apt-get upgrade
+----
+
+.clone git-project
 [source,bash]
 ----
 git clone https://github.com/simcrack/ffhs_chili_watering.git
@@ -26,6 +44,28 @@ cp ffhs_chili_watering/conf /val/lib/chilwater
 
 ==== Install Requirements
 
+.Python3.9.1
+[source,bash]
+----
+# install python3.9.1 dependencies
+sudo apt-get install -y build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
+
+# compile takes a while
+wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz
+tar xf Python-3.9.0.tar.xz
+cd Python-3.9.0
+./configure --prefix=/usr/local/opt/python-3.9.0
+
+# install
+sudo make altinstall
+
+# Make Python 3.9 the default version, make aliases
+sudo update-alternatives --config python
+
+# verify installation
+python -V
+----
+
 .py-spidev
 [source,bash]
 ----
@@ -33,7 +73,7 @@ wget https://github.com/doceme/py-spidev/archive/master.zip
 unzip master.zip
 cd py-spidev-master
 
-# you have to install python3-devel for this (apt install python3-devel)
+# you have to install python3-dev for this (apt install python3-dev)
 sudo python setup.py install
 ----
 
@@ -49,6 +89,70 @@ pip install RPi.GPIO
 # for testing
 # pip install fake-rpigpio
 ----
+
+==== Activate Modules
+
+For a Headless GUI connection, you can use the VNC-Connection.
+.enable VNC
+[source,bash]
+----
+sudo raspi-config
+-> Interface Options
+--> P3 VNC Enable
+--> Yes, enable
+--> ok, is enable
+----
+
+Activate the SPI-Bus
+
+.SPI activation
+[source,bash]
+----
+sudo raspi-config
+-> Interface Options
+--> P4 SPI Enable
+--> Yes, enable
+--> ok, is enable
+----
+
+1-Wire activation
+
+.1-Wire activation
+[source,bash]
+----
+sudo modprobe w1-gpio
+sudo modprobe w1-therm
+sudo nano /boot/config.txt
+# insert at the end this line and save the file
+-> dtoverlay=w1-gpio,gpiopin=4,pullup=on
+
+# to activate the 1-wire bus at the startup use this
+sudo nano /etc/modules
+# add this tow lines to the file and save this, then restart the raspberry pi
+-> w1_gpio
+-> w1_therm
+sudo reboot
+----
+
+1-Wire read sensor id
+
+To use a 1-wire sensor, you need to know the id.
+All connected 1-wire sensors you will find in the raspberry.
+It will be the best that you connect opne sensor by one to read the sensor id.
+Please notice this id, you need this for the configuration of the sensors.
+
+.1-Wire read sensor id
+[source,bash]
+----
+cd /sys/bus/w1/devices/
+ls
+# now you see the id of the sensor
+
+# for a test reading use
+# cat /sys/bus/w1/devices/<your sensor id>/w1_slave
+cat /sys/bus/w1/devices/28-3c01b556cc3d/w1_slave
+----
+
 
 ==== Configuration
 You can define the base directory by changing the following line in the base configuration file:
@@ -75,6 +179,161 @@ authRealm = localhost
 [admin]
 password = admin
 ----
+
+===== Sensor configuration
+
+In this config file, you can configure one or more sensors.
+You can also create more than one config gile (i.E. for each sensor one file).
+In the square brackets you can specify a description/name for the sensor.
+
+
+
+.exampleSensor.conf
+[source]
+----
+[Example Sensor]
+Nr = x
+Type = y
+Channel = z
+----
+
+The sensor number must be globally unique
+[%hardbreaks]
+The type can be on of the following numbers:
+1 => temperature sensor
+2 => humidity sensor
+3 => light sensor
+11 => test temperature sensor, the value is not measured but read from a conf file
+12 => test humidity sensor, the value is not measured but read from a conf file
+13 => test light sensor, the value is not measured but read from a conf file
+
+The channel is the physical pin or path on which the sensor is attached.
+You can crate a file for each Sensor or create all sensors in the same file.
+The name of the file is up to you, it must only saved in the
+/conf/sensors folder and end with .conf.
+
+.concretExampleSensor.conf
+[source]
+----
+# Humidity
+[Sensor 1]
+Nr = 1
+Type = 2
+Channel = 1
+
+# Light
+[Sensor 7]
+Nr = 7
+Type = 3
+Channel = 7
+
+# Temperature
+[Sensor 8]
+Nr = 8
+Type = 1
+Channel = /sys/bus/w1/devices/28-3c01b556cc3d/w1_slave
+----
+
+===== Pump configuration
+
+In the config file, you can configure one or more pumps.
+The name of the file is up to you, it must only saved in the
+/conf/pumps folder and end with .conf.
+You can also create more than one config gile (i.E. for each pump one file).
+In the square brackets you can specify a description/name for the pump.
+
+.examplePump.conf
+[source]
+----
+[Example Pump]
+Nr = x
+GPIO = y
+----
+[%hardbreaks]
+The pump number must be globally unique
+The GPIO is the physcal pin on which the pump is attached
+
+If you want to create a test pump, you can set GPIO to 0.
+A test pump does nothing but print a status update to the stdout.
+
+===== Controller configuration
+
+In the config file, you can configure one controller and its rules.
+You must create a separate file for each controller.
+The name of the file is up to you, it must only saved in the
+/conf/controllers folder and end with .conf.
+The file must contain one default section and minimal one rule section.
+
+.exampleDefaultSection.conf
+[source]
+----
+[DEFAULT]
+Type = x
+Nr = y
+SensorNr = a
+PumpNr = b
+----
+
+[%hardbreaks]
+In the Default section you need to describe the controller Parameters.
+The Typ of the controller:
+1 => TEMPERATURE
+2 => HUMIDITY
+3 => LIGHT
+4 => TIME
+[%hardbreaks]
+The controller number must be globally unique.
+The sensor number must match to a Sensor that is configured at the sensor section.
+The pump number must match to a Sensor that is configured at the pump section.
+
+ .exampleRuleSection.conf
+[source]
+----
+[RuleExample]
+TimeFrom = 00:00:00
+TimeTo = 01:59:00
+Comparator = <
+RightValue = 60
+PumpSeconds = 2
+----
+
+In the rule you have a TimeFrom and TimeTo. In this time the rule is active.
+[%hardbreaks]
+You can choose a comparator that compares the values.
+Possible comparator are "<", "<=" "=", ">=", ">".
+This comparator the values like _"sensor_value comparator RightValue"_,
+e.g. _"sensor_value < 60"_
+
+In the time the rule is active, he will only run one time.
+If he pump water to the plant in the first minute,
+he didn't like to pump water for the rest of the rule time.
+
+As follows a concrete example of a controller config file.
+
+.concretControllerExample.conf
+[source]
+----
+[DEFAULT]
+Type = 2
+Nr = 1
+SensorNr = 1
+PumpNr = 1
+
+[Rule1]
+TimeFrom = 00:00:00
+TimeTo = 01:59:00
+Comparator = <
+RightValue = 60
+PumpSeconds = 2
+
+[Rule2]
+TimeFrom = 02:00:00
+TimeTo = 03:59:00
+Comparator = <
+RightValue = 60
+PumpSeconds = 2
+----
+
 
 
 Ask SR oder Google (AsciiDoc)
