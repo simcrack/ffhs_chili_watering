@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>ffhs_cws.pumper.Pumper API documentation</title>
+<meta name="description" content="Manages Pumps" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>ffhs_cws.pumper.Pumper</code></h1>
+</header>
+<section id="section-intro">
+<p>Manages Pumps</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Manages Pumps&#34;&#34;&#34;
+
+
+from pumper.Pump import Pump
+from pumper.enums import State
+import threading
+import time
+import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class _Pump(Pump):
+        &#34;&#34;&#34;Private class for a pump extending the Pump class in Pump.py.
+
+        It adds values and functions which are used for the pump management.
+        This Class is NOT THREAD SAFE, every access to it must be secured with a
+        lock (in Pumper class)&#34;
+        &#34;&#34;&#34;
+
+        def __init__(self, pumpNr: int, gpio: str):
+                &#34;&#34;&#34;See base class
+
+                Attributes:
+                        seconds : Number of seconds as float for which the pump shall run.
+                                                The pump must be stopped if it reaches 0.
+                        For the rest, see base class Pump
+                &#34;&#34;&#34;
+                Pump.__init__(self, pumpNr, gpio)
+                self.seconds = float(0)
+
+                # runSince is used to calculate the stop time.
+                self._runSince: datetime.datetime = None
+
+        def __del__(self):
+                &#34;&#34;&#34;Stops the pump before the object is destroyed.
+
+                This is a safety measurement, because the pump could run for a long time
+                even if the software was stopped, if the stop command was not send.
+                &#34;&#34;&#34;
+                self.stop()
+
+        def manageStartStop(self):
+                &#34;&#34;&#34;Stops/starts the pump, if this has to be done.
+
+                Recalculates the seconds based on the time ellapsed since the last call.
+                &#34;&#34;&#34;
+                if self._runSince and self.seconds &lt;= 0:
+                        # Pump started, but has to be stopped
+                        self.stop()
+                        self._runSince = None
+
+                elif not self._runSince and self.seconds &gt; 0:
+                        # Pump stopped, but has to be started
+                        self._runSince = datetime.datetime.now()
+                        self.start()
+
+                elif self._runSince:
+                        # Pump started, seconds have to be updated
+                        currentDate = datetime.datetime.now()
+                        self.seconds -= (currentDate - self._runSince).total_seconds()
+                        self._runSince = currentDate
+
+        def immediateStop(self):
+                &#34;&#34;&#34;Imediately stops Pump and resets control variables.
+
+                Is used if the whole System is going down.
+                &#34;&#34;&#34;
+                self.seconds = float(0)
+                self._runSince: datetime.datetime = None
+                self.stop()
+
+
+class _TestPump(_Pump):
+        &#34;&#34;&#34;Private class for a test pump extending the _Pump class.
+
+        It behaves like _Pump, but overrides the stop() and start() function
+        which now simply make a log entry.
+        &#34;&#34;&#34;
+
+        def start(self):
+                logger.info(&#34;TESTPUMP START: &#34; + str(self._pumpNr))
+
+        def stop(self):
+                logger.info(&#34;TESTPUMP  STOP: &#34; + str(self._pumpNr))
+
+
+class Pumper:
+        &#34;&#34;&#34;Is repsonsible for the management of all pumps.
+
+        Runs in a separate thread and gets pump orders from other threads.
+        Other threads can also create new pumps and delete exsiting ones
+        with its class methods.
+        &#34;&#34;&#34;
+
+        def __init__(self):
+                &#34;&#34;&#34;Inits Pumper with an empty list of pumps.
+                
+                Attributes:
+                        pump : A dict of pumps, which are managed by this pumper (pumNr is the key).
+                        lock : A Lock object which must be used for direct state changes of Pumper.
+                &#34;&#34;&#34;
+                self.pumps = {}
+                self.lock = threading.Lock()
+                self._stop: bool = None
+
+        def run(self):
+                &#34;&#34;&#34;Starts the pumper management loop.
+
+                This function keeps running until the function stop() is called from
+                another thread.
+                It ensures that the pumps are stopped after the specified time which
+                was given in the pump() function.
+                &#34;&#34;&#34;
+                logger.info(&#34;Pumper startet&#34;)
+                self._state = State.RUNNING
+                while 1:
+                        time.sleep(0.1)
+
+                        with self.lock:
+                                if self._stop:
+                                        for pump in self.pumps:
+                                                self.pumps[pump].immediateStop()
+
+                                        self._state = State.STOPPED
+                                        logger.info(&#34;Pumper is going down&#34;)
+                                        break
+
+                                for pump in self.pumps:
+                                        self.pumps[pump].manageStartStop()
+
+        def stop(self):
+                &#34;&#34;&#34;Thread safe, stops the sensor measure loop.&#34;&#34;&#34;
+                with self.lock:
+                        self._stop = True
+
+        def addPump(self, pumpNr, gpio):
+                &#34;&#34;&#34;Thread safe, instantiates a pump and adds it to the managed pump list.
+
+                Args:
+                        pumpNr: Number of the pump (int).
+                        gpio: GPIO Pin of the pump.
+                &#34;&#34;&#34;
+                with self.lock:
+                        if pumpNr in self.pumps:
+                                raise ValueError(&#34;pumpNr is already in use by another pump&#34;)
+
+                        if gpio == 0:
+                                # For testing purposes for when there is no hardware available.
+                                self.pumps[pumpNr] = _TestPump(pumpNr, gpio)
+                        else:
+                                self.pumps[pumpNr] = _Pump(pumpNr, gpio)
+
+        def pump(self, pumpNr: int, seconds: int) -&gt; int:
+                &#34;&#34;&#34;Thread safe, receives a pump order for a specific pump.
+
+                The pump is started, on the next checking time (manageStartStop())
+                and will be stopped after the time period defined in &#34;seconds&#34; has elapsed.
+                If the pump is already running, the seconds are added to the predefined
+                ones.
+
+                Args:
+                        pumpNr: Number of the pump.
+                        seconds: For how many seconds shall the pump be activated?
+
+                Returns:
+                        New value (could be equivalent to the argument &#34;seconds&#34;, but could
+                        be also more than that.
+                &#34;&#34;&#34;
+                logger.info(&#34;Pump order received, pumpNr: %d, second: %d&#34;, pumpNr, seconds)
+                with self.lock:
+
+                        self.pumps[pumpNr].seconds += seconds
+                        return self.pumps[pumpNr].seconds
+
+        def getPumpState(self, pumpNr: int) -&gt; str:
+                &#34;&#34;&#34;NOT THREAD SAFE, gets a string representation of the current Pump state.
+
+                Args:
+                        pumpNr: Number of the Pump.
+
+                Returns:
+                        A String containing the current pump state, the datetime when the
+                        Pump ran lastly and the remaining number of second it has to run.
+                &#34;&#34;&#34;
+                ret = &#34;Pumping&#34; if self.pumps[pumpNr].isPumping() else &#34;Stopped&#34;
+                if self.pumps[pumpNr]._runSince:
+                        ret += &#34; last start: {:%Y-%m-%d %H:%M:%S}&#34;.format(
+                                self.pumps[pumpNr]._runSince
+                        )
+                if self.pumps[pumpNr].seconds &gt; 0:
+                        ret += &#34; seconds remaining: {}&#34;.format(self.pumps[pumpNr].seconds)
+                return ret
+
+        def pumpExists(self, pumpNr: int) -&gt; bool:
+                &#34;&#34;&#34;NOT THREAD SAFE, checks, if a given pumpNr already exists.
+
+                Args:
+                        pumpNr: Number of the Pump.
+
+                Returns:
+                        True if the Pump already exists, else False.
+                &#34;&#34;&#34;
+                return pumpNr in self.pumps</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="ffhs_cws.pumper.Pumper.Pumper"><code class="flex name class">
+<span>class <span class="ident">Pumper</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Is repsonsible for the management of all pumps.</p>
+<p>Runs in a separate thread and gets pump orders from other threads.
+Other threads can also create new pumps and delete exsiting ones
+with its class methods.</p>
+<p>Inits Pumper with an empty list of pumps.</p>
+<h2 id="attributes">Attributes</h2>
+<p>pump : A dict of pumps, which are managed by this pumper (pumNr is the key).
+lock : A Lock object which must be used for direct state changes of Pumper.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Pumper:
+        &#34;&#34;&#34;Is repsonsible for the management of all pumps.
+
+        Runs in a separate thread and gets pump orders from other threads.
+        Other threads can also create new pumps and delete exsiting ones
+        with its class methods.
+        &#34;&#34;&#34;
+
+        def __init__(self):
+                &#34;&#34;&#34;Inits Pumper with an empty list of pumps.
+                
+                Attributes:
+                        pump : A dict of pumps, which are managed by this pumper (pumNr is the key).
+                        lock : A Lock object which must be used for direct state changes of Pumper.
+                &#34;&#34;&#34;
+                self.pumps = {}
+                self.lock = threading.Lock()
+                self._stop: bool = None
+
+        def run(self):
+                &#34;&#34;&#34;Starts the pumper management loop.
+
+                This function keeps running until the function stop() is called from
+                another thread.
+                It ensures that the pumps are stopped after the specified time which
+                was given in the pump() function.
+                &#34;&#34;&#34;
+                logger.info(&#34;Pumper startet&#34;)
+                self._state = State.RUNNING
+                while 1:
+                        time.sleep(0.1)
+
+                        with self.lock:
+                                if self._stop:
+                                        for pump in self.pumps:
+                                                self.pumps[pump].immediateStop()
+
+                                        self._state = State.STOPPED
+                                        logger.info(&#34;Pumper is going down&#34;)
+                                        break
+
+                                for pump in self.pumps:
+                                        self.pumps[pump].manageStartStop()
+
+        def stop(self):
+                &#34;&#34;&#34;Thread safe, stops the sensor measure loop.&#34;&#34;&#34;
+                with self.lock:
+                        self._stop = True
+
+        def addPump(self, pumpNr, gpio):
+                &#34;&#34;&#34;Thread safe, instantiates a pump and adds it to the managed pump list.
+
+                Args:
+                        pumpNr: Number of the pump (int).
+                        gpio: GPIO Pin of the pump.
+                &#34;&#34;&#34;
+                with self.lock:
+                        if pumpNr in self.pumps:
+                                raise ValueError(&#34;pumpNr is already in use by another pump&#34;)
+
+                        if gpio == 0:
+                                # For testing purposes for when there is no hardware available.
+                                self.pumps[pumpNr] = _TestPump(pumpNr, gpio)
+                        else:
+                                self.pumps[pumpNr] = _Pump(pumpNr, gpio)
+
+        def pump(self, pumpNr: int, seconds: int) -&gt; int:
+                &#34;&#34;&#34;Thread safe, receives a pump order for a specific pump.
+
+                The pump is started, on the next checking time (manageStartStop())
+                and will be stopped after the time period defined in &#34;seconds&#34; has elapsed.
+                If the pump is already running, the seconds are added to the predefined
+                ones.
+
+                Args:
+                        pumpNr: Number of the pump.
+                        seconds: For how many seconds shall the pump be activated?
+
+                Returns:
+                        New value (could be equivalent to the argument &#34;seconds&#34;, but could
+                        be also more than that.
+                &#34;&#34;&#34;
+                logger.info(&#34;Pump order received, pumpNr: %d, second: %d&#34;, pumpNr, seconds)
+                with self.lock:
+
+                        self.pumps[pumpNr].seconds += seconds
+                        return self.pumps[pumpNr].seconds
+
+        def getPumpState(self, pumpNr: int) -&gt; str:
+                &#34;&#34;&#34;NOT THREAD SAFE, gets a string representation of the current Pump state.
+
+                Args:
+                        pumpNr: Number of the Pump.
+
+                Returns:
+                        A String containing the current pump state, the datetime when the
+                        Pump ran lastly and the remaining number of second it has to run.
+                &#34;&#34;&#34;
+                ret = &#34;Pumping&#34; if self.pumps[pumpNr].isPumping() else &#34;Stopped&#34;
+                if self.pumps[pumpNr]._runSince:
+                        ret += &#34; last start: {:%Y-%m-%d %H:%M:%S}&#34;.format(
+                                self.pumps[pumpNr]._runSince
+                        )
+                if self.pumps[pumpNr].seconds &gt; 0:
+                        ret += &#34; seconds remaining: {}&#34;.format(self.pumps[pumpNr].seconds)
+                return ret
+
+        def pumpExists(self, pumpNr: int) -&gt; bool:
+                &#34;&#34;&#34;NOT THREAD SAFE, checks, if a given pumpNr already exists.
+
+                Args:
+                        pumpNr: Number of the Pump.
+
+                Returns:
+                        True if the Pump already exists, else False.
+                &#34;&#34;&#34;
+                return pumpNr in self.pumps</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="ffhs_cws.pumper.Pumper.Pumper.addPump"><code class="name flex">
+<span>def <span class="ident">addPump</span></span>(<span>self, pumpNr, gpio)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Thread safe, instantiates a pump and adds it to the managed pump list.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pumpNr</code></strong></dt>
+<dd>Number of the pump (int).</dd>
+<dt><strong><code>gpio</code></strong></dt>
+<dd>GPIO Pin of the pump.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def addPump(self, pumpNr, gpio):
+        &#34;&#34;&#34;Thread safe, instantiates a pump and adds it to the managed pump list.
+
+        Args:
+                pumpNr: Number of the pump (int).
+                gpio: GPIO Pin of the pump.
+        &#34;&#34;&#34;
+        with self.lock:
+                if pumpNr in self.pumps:
+                        raise ValueError(&#34;pumpNr is already in use by another pump&#34;)
+
+                if gpio == 0:
+                        # For testing purposes for when there is no hardware available.
+                        self.pumps[pumpNr] = _TestPump(pumpNr, gpio)
+                else:
+                        self.pumps[pumpNr] = _Pump(pumpNr, gpio)</code></pre>
+</details>
+</dd>
+<dt id="ffhs_cws.pumper.Pumper.Pumper.getPumpState"><code class="name flex">
+<span>def <span class="ident">getPumpState</span></span>(<span>self, pumpNr: int) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>NOT THREAD SAFE, gets a string representation of the current Pump state.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pumpNr</code></strong></dt>
+<dd>Number of the Pump.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>A String containing the current pump state, the datetime when the
+Pump ran lastly and the remaining number of second it has to run.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getPumpState(self, pumpNr: int) -&gt; str:
+        &#34;&#34;&#34;NOT THREAD SAFE, gets a string representation of the current Pump state.
+
+        Args:
+                pumpNr: Number of the Pump.
+
+        Returns:
+                A String containing the current pump state, the datetime when the
+                Pump ran lastly and the remaining number of second it has to run.
+        &#34;&#34;&#34;
+        ret = &#34;Pumping&#34; if self.pumps[pumpNr].isPumping() else &#34;Stopped&#34;
+        if self.pumps[pumpNr]._runSince:
+                ret += &#34; last start: {:%Y-%m-%d %H:%M:%S}&#34;.format(
+                        self.pumps[pumpNr]._runSince
+                )
+        if self.pumps[pumpNr].seconds &gt; 0:
+                ret += &#34; seconds remaining: {}&#34;.format(self.pumps[pumpNr].seconds)
+        return ret</code></pre>
+</details>
+</dd>
+<dt id="ffhs_cws.pumper.Pumper.Pumper.pump"><code class="name flex">
+<span>def <span class="ident">pump</span></span>(<span>self, pumpNr: int, seconds: int) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Thread safe, receives a pump order for a specific pump.</p>
+<p>The pump is started, on the next checking time (manageStartStop())
+and will be stopped after the time period defined in "seconds" has elapsed.
+If the pump is already running, the seconds are added to the predefined
+ones.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pumpNr</code></strong></dt>
+<dd>Number of the pump.</dd>
+<dt><strong><code>seconds</code></strong></dt>
+<dd>For how many seconds shall the pump be activated?</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>New value (could be equivalent to the argument "seconds", but could
+be also more than that.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pump(self, pumpNr: int, seconds: int) -&gt; int:
+        &#34;&#34;&#34;Thread safe, receives a pump order for a specific pump.
+
+        The pump is started, on the next checking time (manageStartStop())
+        and will be stopped after the time period defined in &#34;seconds&#34; has elapsed.
+        If the pump is already running, the seconds are added to the predefined
+        ones.
+
+        Args:
+                pumpNr: Number of the pump.
+                seconds: For how many seconds shall the pump be activated?
+
+        Returns:
+                New value (could be equivalent to the argument &#34;seconds&#34;, but could
+                be also more than that.
+        &#34;&#34;&#34;
+        logger.info(&#34;Pump order received, pumpNr: %d, second: %d&#34;, pumpNr, seconds)
+        with self.lock:
+
+                self.pumps[pumpNr].seconds += seconds
+                return self.pumps[pumpNr].seconds</code></pre>
+</details>
+</dd>
+<dt id="ffhs_cws.pumper.Pumper.Pumper.pumpExists"><code class="name flex">
+<span>def <span class="ident">pumpExists</span></span>(<span>self, pumpNr: int) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>NOT THREAD SAFE, checks, if a given pumpNr already exists.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pumpNr</code></strong></dt>
+<dd>Number of the Pump.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>True if the Pump already exists, else False.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pumpExists(self, pumpNr: int) -&gt; bool:
+        &#34;&#34;&#34;NOT THREAD SAFE, checks, if a given pumpNr already exists.
+
+        Args:
+                pumpNr: Number of the Pump.
+
+        Returns:
+                True if the Pump already exists, else False.
+        &#34;&#34;&#34;
+        return pumpNr in self.pumps</code></pre>
+</details>
+</dd>
+<dt id="ffhs_cws.pumper.Pumper.Pumper.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Starts the pumper management loop.</p>
+<p>This function keeps running until the function stop() is called from
+another thread.
+It ensures that the pumps are stopped after the specified time which
+was given in the pump() function.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run(self):
+        &#34;&#34;&#34;Starts the pumper management loop.
+
+        This function keeps running until the function stop() is called from
+        another thread.
+        It ensures that the pumps are stopped after the specified time which
+        was given in the pump() function.
+        &#34;&#34;&#34;
+        logger.info(&#34;Pumper startet&#34;)
+        self._state = State.RUNNING
+        while 1:
+                time.sleep(0.1)
+
+                with self.lock:
+                        if self._stop:
+                                for pump in self.pumps:
+                                        self.pumps[pump].immediateStop()
+
+                                self._state = State.STOPPED
+                                logger.info(&#34;Pumper is going down&#34;)
+                                break
+
+                        for pump in self.pumps:
+                                self.pumps[pump].manageStartStop()</code></pre>
+</details>
+</dd>
+<dt id="ffhs_cws.pumper.Pumper.Pumper.stop"><code class="name flex">
+<span>def <span class="ident">stop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Thread safe, stops the sensor measure loop.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stop(self):
+        &#34;&#34;&#34;Thread safe, stops the sensor measure loop.&#34;&#34;&#34;
+        with self.lock:
+                self._stop = True</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ffhs_cws.pumper" href="index.html">ffhs_cws.pumper</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="ffhs_cws.pumper.Pumper.Pumper" href="#ffhs_cws.pumper.Pumper.Pumper">Pumper</a></code></h4>
+<ul class="two-column">
+<li><code><a title="ffhs_cws.pumper.Pumper.Pumper.addPump" href="#ffhs_cws.pumper.Pumper.Pumper.addPump">addPump</a></code></li>
+<li><code><a title="ffhs_cws.pumper.Pumper.Pumper.getPumpState" href="#ffhs_cws.pumper.Pumper.Pumper.getPumpState">getPumpState</a></code></li>
+<li><code><a title="ffhs_cws.pumper.Pumper.Pumper.pump" href="#ffhs_cws.pumper.Pumper.Pumper.pump">pump</a></code></li>
+<li><code><a title="ffhs_cws.pumper.Pumper.Pumper.pumpExists" href="#ffhs_cws.pumper.Pumper.Pumper.pumpExists">pumpExists</a></code></li>
+<li><code><a title="ffhs_cws.pumper.Pumper.Pumper.run" href="#ffhs_cws.pumper.Pumper.Pumper.run">run</a></code></li>
+<li><code><a title="ffhs_cws.pumper.Pumper.Pumper.stop" href="#ffhs_cws.pumper.Pumper.Pumper.stop">stop</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
